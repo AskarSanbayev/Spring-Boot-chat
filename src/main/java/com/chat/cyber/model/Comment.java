@@ -18,9 +18,6 @@ public class Comment implements Serializable {
     private Post post;
     private User author;
 
-    public Comment() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
     @SequenceGenerator(name = "comment_sequence", allocationSize = 1)

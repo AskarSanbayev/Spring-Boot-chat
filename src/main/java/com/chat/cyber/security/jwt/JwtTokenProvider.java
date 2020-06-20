@@ -1,9 +1,11 @@
 package com.chat.cyber.security.jwt;
 
-import com.chat.cyber.exception.JwtAuthenticationException;
 import com.chat.cyber.model.Role;
 import com.chat.cyber.util.AppConstants;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,8 +33,16 @@ public class JwtTokenProvider {
     @Value("${auth.refreshJwtExpiration}")
     private int refreshJwtExpirationInMs;
 
-    @Autowired
     private JwtUserDetailService jwtUserDetailService;
+
+    public JwtUserDetailService getJwtUserDetailService() {
+        return jwtUserDetailService;
+    }
+
+    @Autowired
+    public void setJwtUserDetailService(JwtUserDetailService jwtUserDetailService) {
+        this.jwtUserDetailService = jwtUserDetailService;
+    }
 
     public String generateAccessToken(String login, Set<Role> roles) {
         Claims claims = extractClaim(login, roles);
@@ -76,12 +86,8 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException(INVALID_JWT_TOKEN_MESSAGE);
-        }
+        Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+        return !claims.getBody().getExpiration().before(new Date());
     }
 
     private Set<Role> getRoleNames(Set<Role> userRoles) {

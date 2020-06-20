@@ -28,9 +28,6 @@ public class User implements Serializable {
     private Set<Post> posts;
     private Set<Comment> comments;
 
-    public User() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     @SequenceGenerator(name = "user_sequence", allocationSize = 1)
@@ -82,7 +79,7 @@ public class User implements Serializable {
     }
 
     @Column(name = "email")
-    @Email(message = "Email is not correct")
+//    @Email(message = "Email is not correct")
     public String getEmail() {
         return email;
     }
@@ -101,8 +98,8 @@ public class User implements Serializable {
         this.age = age;
     }
 
-    @ElementCollection(targetClass = Role.class,fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "user_id"))
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"))
     @Enumerated(EnumType.STRING)
     public Set<Role> getRoles() {
         return roles;
@@ -111,6 +108,7 @@ public class User implements Serializable {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
 
     @Temporal(TemporalType.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

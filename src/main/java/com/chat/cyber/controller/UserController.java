@@ -14,7 +14,7 @@ import java.util.Set;
 @Validated
 public class UserController {
     private final UserService userService;
-    // TODO : dto, pathes
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;

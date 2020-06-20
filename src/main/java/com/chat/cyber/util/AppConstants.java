@@ -9,5 +9,5 @@ public class AppConstants {
 
     // Authentication
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String LOGIN_ENDPOINT = "/auth/login";
+    public static final String AUTHENTICATION_ENDPOINT = "/auth/**";
 }

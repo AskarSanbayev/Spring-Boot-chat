@@ -19,9 +19,6 @@ public class Post implements Serializable {
     private User author;
     private Set<Comment> postComments;
 
-    public Post() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_sequence")
     @SequenceGenerator(name = "post_sequence", allocationSize = 1)
