@@ -31,8 +31,6 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("User not found");
         }
     }
 
@@ -45,8 +43,6 @@ public class UserServiceImpl implements UserService {
     public void update(User user) {
         if (userRepository.findById(user.getId()).isPresent()) {
             userRepository.save(user);
-        } else {
-            throw new EntityNotFoundException("User not found");
         }
     }
 

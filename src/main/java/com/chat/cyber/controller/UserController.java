@@ -1,5 +1,6 @@
 package com.chat.cyber.controller;
 
+import com.chat.cyber.model.Post;
 import com.chat.cyber.model.User;
 import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public Set<User> findAllFriends(@PathVariable("id") Long id) {
         return userService.findById(id).getFriendList();
+    }
+
+    @GetMapping("/{id}/posts")
+    public Set<Post> findAllPosts(@PathVariable("id") Long id) {
+        return userService.findById(id).getPosts();
     }
 
     @GetMapping("/{login}")

@@ -1,6 +1,7 @@
 package com.chat.cyber.service.impl;
 
 import com.chat.cyber.exception.EntityNotFoundException;
+import com.chat.cyber.exception.JwtAuthenticationException;
 import com.chat.cyber.model.Token;
 import com.chat.cyber.model.User;
 import com.chat.cyber.repo.TokenRepository;
@@ -9,7 +10,6 @@ import com.chat.cyber.service.TokenService;
 import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +57,7 @@ public class TokenServiceImpl implements TokenService {
         boolean validated = jwtTokenProvider.validateToken(refreshToken);
         Optional<Token> token = validated ? tokenRepository.findByRefreshToken(refreshToken) : Optional.empty();
         if (token.isEmpty()) {
-            throw new BadCredentialsException("Invalid refresh token");
+            throw new JwtAuthenticationException("Invalid refresh token");
         }
         String userLogin = token.get().getUser().getLogin();
         token = Optional.ofNullable(create(userLogin));

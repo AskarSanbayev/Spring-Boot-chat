@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-import static com.chat.cyber.util.AppConstants.*;
-
 @RestController
-@RequestMapping(value = AUTH)
+@RequestMapping(value = "/auth")
 public class AuthController {
 
     private final TokenService tokenService;
@@ -25,13 +23,13 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
-    @PostMapping(LOGIN)
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
         Token token = tokenService.create(requestDto.getLogin());
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping(REFRESH)
+    @PostMapping("/refresh")
     public ResponseEntity refreshToken(@RequestBody Token token) {
         Optional<Token> updateToken = tokenService.update(token.getRefreshToken());
         return ResponseEntity.ok(updateToken);

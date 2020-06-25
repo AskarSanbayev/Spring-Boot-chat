@@ -4,7 +4,9 @@ import com.chat.cyber.exception.EntityNotFoundException;
 import com.chat.cyber.model.Post;
 import com.chat.cyber.model.User;
 import com.chat.cyber.repo.PostRepository;
+import com.chat.cyber.security.jwt.JwtUser;
 import com.chat.cyber.service.PostService;
+import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +18,13 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final UserService userService;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository,
+                           UserService userService) {
         this.postRepository = postRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -32,8 +37,6 @@ public class PostServiceImpl implements PostService {
     public void deleteById(Long id) {
         if (postRepository.findById(id).isPresent()) {
             postRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("Post not found");
         }
     }
 
@@ -46,8 +49,6 @@ public class PostServiceImpl implements PostService {
     public void update(Post post) {
         if (postRepository.findById(post.getId()).isPresent()) {
             postRepository.save(post);
-        } else {
-            throw new EntityNotFoundException("Post not found");
         }
     }
 
@@ -57,8 +58,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void create(Post post, User user) {
-        post.setAuthor(user);
+    public void create(Post post, JwtUser user) {
+        User author = userService.findByLogin(user.getUsername());
+        post.setAuthor(author);
         postRepository.save(post);
     }
 }
