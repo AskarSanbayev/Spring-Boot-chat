@@ -37,10 +37,10 @@ public class EducationService {
         Education education;
         RefsValues city = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.CITY).orElse(null);
         RefsValues country = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.COUNTRY).orElse(null);
-        RefsValues schoolName = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.COUNTRY).orElse(null);
-        RefsValues faculty = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.COUNTRY).orElse(null);
-        RefsValues studyType = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.COUNTRY).orElse(null);
-        RefsValues status = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.COUNTRY).orElse(null);
+        RefsValues schoolName = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.SCHOOL_NAME).orElse(null);
+        RefsValues faculty = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.FACULTY).orElse(null);
+        RefsValues studyType = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.STUDY_TYPE).orElse(null);
+        RefsValues status = refsValuesService.findByIdAndRefsCodeName(educationDto.getCityCode(), RefsCodeName.SCHOOL_STATUS).orElse(null);
         if (educationDto.getId() == null) {
             education = new Education();
         } else {
