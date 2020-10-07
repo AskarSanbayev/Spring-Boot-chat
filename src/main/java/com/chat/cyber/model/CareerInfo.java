@@ -22,11 +22,11 @@ public class CareerInfo {
     private String workPlaceTitle;
 
     @ManyToOne
-    @Column(name = "country_fk")
+    @JoinColumn(name = "country_fk")
     private RefsValues country;
 
     @ManyToOne
-    @Column(name = "city_fk")
+    @JoinColumn(name = "city_fk")
     private RefsValues city;
 
     private String startDate;

@@ -16,32 +16,32 @@ public class PersonalViews {
     @Column(name = "record_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_fk", referencedColumnName = "record_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @Column(name = "political_view_fk")
+    @JoinColumn(name = "political_view_fk")
     private RefsValues politicalViews;
 
     @ManyToOne
-    @Column(name = "personal_priority_fk")
+    @JoinColumn(name = "personal_priority_fk")
     private RefsValues personalPriority;
 
     @ManyToOne
-    @Column(name = "religion_fk")
+    @JoinColumn(name = "religion_fk")
     private RefsValues religion;
 
     @ManyToOne
-    @Column(name = "important_in_others_fk")
+    @JoinColumn(name = "important_in_others_fk")
     private RefsValues importantInOthers;
 
     @ManyToOne
-    @Column(name = "smoking_view_fk")
+    @JoinColumn(name = "smoking_view_fk")
     private RefsValues viewsOnSmoking;
 
     @ManyToOne
-    @Column(name = "alcohol_view_fk")
+    @JoinColumn(name = "alcohol_view_fk")
     private RefsValues viewsOnAlcohol;
 
     private String inspiredBy;

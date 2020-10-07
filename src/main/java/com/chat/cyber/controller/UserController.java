@@ -1,9 +1,9 @@
 package com.chat.cyber.controller;
 
-import com.chat.cyber.model.Post;
 import com.chat.cyber.model.User;
 import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +14,11 @@ import java.util.Set;
 @RequestMapping("/user")
 @Validated
 public class UserController {
-    private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_user')")
     @GetMapping
     public List<User> findAll() {
         return userService.findAll();
@@ -29,16 +27,6 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public Set<User> findAllFriends(@PathVariable("id") Long id) {
         return userService.findById(id).getFriendList();
-    }
-
-    @GetMapping("/{id}/posts")
-    public Set<Post> findAllPosts(@PathVariable("id") Long id) {
-        return userService.findById(id).getPosts();
-    }
-
-    @GetMapping("/{login}")
-    public User findByLogin(@PathVariable("login") String login) {
-        return userService.findByLogin(login);
     }
 
     @PostMapping

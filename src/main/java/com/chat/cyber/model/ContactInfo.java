@@ -20,11 +20,11 @@ public class ContactInfo {
     private User user;
 
     @ManyToOne
-    @Column(name = "country_fk")
+    @JoinColumn(name = "country_fk")
     private RefsValues country;
 
     @ManyToOne
-    @Column(name = "city_fk")
+    @JoinColumn(name = "city_fk")
     private RefsValues city;
 
     @Column(name = "street")

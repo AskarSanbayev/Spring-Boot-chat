@@ -1,7 +1,6 @@
 package com.chat.cyber.controller;
 
 import com.chat.cyber.dto.FileResponse;
-import com.chat.cyber.security.jwt.JwtUser;
 import com.chat.cyber.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -25,17 +24,17 @@ public class FileController {
         this.storageService = storageService;
     }
 
-    @PostMapping
-    public FileResponse uploadFile(@RequestParam("file") MultipartFile file,
-                                   @AuthenticationPrincipal JwtUser jwtUser) {
-        String name = storageService.store(file, jwtUser.getId());
-
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(name)
-                .toUriString();
-        return new FileResponse(name, uri, file.getContentType(), file.getSize());
-    }
+//    @PostMapping
+//    public FileResponse uploadFile(@RequestParam("file") MultipartFile file,
+//                                   @AuthenticationPrincipal AuthUser principal) {
+//        String name = storageService.store(file, principal.getId());
+//
+//        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/download/")
+//                .path("name")
+//                .toUriString();
+//        return new FileResponse("name", uri, file.getContentType(), file.getSize());
+//    }
 
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {

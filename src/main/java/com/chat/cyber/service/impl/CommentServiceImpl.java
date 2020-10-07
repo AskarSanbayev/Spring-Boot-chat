@@ -3,9 +3,7 @@ package com.chat.cyber.service.impl;
 import com.chat.cyber.exception.EntityNotFoundException;
 import com.chat.cyber.model.Comment;
 import com.chat.cyber.model.Post;
-import com.chat.cyber.model.User;
 import com.chat.cyber.repo.CommentRepository;
-import com.chat.cyber.security.jwt.JwtUser;
 import com.chat.cyber.service.CommentService;
 import com.chat.cyber.service.PostService;
 import com.chat.cyber.service.UserService;
@@ -13,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -58,10 +57,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void create(Comment comment, Long postId, JwtUser user) {
-        User author = userService.findByLogin(user.getUsername());
+    public void create(Comment comment, Long postId, Principal principal) {
+//        User author = userService.findByLogin(user.getUsername());
         Post post = postService.findById(postId);
-        comment.setAuthor(author);
+//        comment.setAuthor(author);
         comment.setPost(post);
         commentRepository.save(comment);
     }

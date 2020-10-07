@@ -1,21 +1,28 @@
 package com.chat.cyber.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "post")
 public class Post implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_sequence")
-    @SequenceGenerator(name = "post_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_post")
+    @SequenceGenerator(name = "sq_post", allocationSize = 1)
     @Column(name = "record_id")
     private Long id;
+
+    @Column(name = "uuid")
+    private String uuid;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "creation_date")

@@ -8,7 +8,10 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -17,13 +20,13 @@ import java.util.*;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-    @SequenceGenerator(name = "user_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_user")
+    @SequenceGenerator(name = "sq_user", allocationSize = 1)
     @Column(name = "record_id")
     private Long id;
 
     @Column(name = "uuid")
-    private UUID uuid;
+    private String uuid;
 
     @Column(name = "name")
     private String name;
@@ -31,13 +34,9 @@ public class User implements Serializable {
     @Column(name = "lastName")
     private String lastName;
 
-    @Column(name = "login", nullable = false)
+    @Column(name = "username", nullable = false)
     @NotBlank(message = "Login is a mandatory parameter!")
-    private String login;
-
-    @Column(name = "password", nullable = false)
-    @NotBlank(message = "Password is a mandatory parameter!")
-    private String password;
+    private String username;
 
     @Column(name = "email")
 //    @Email(message = "Email is not correct")
@@ -46,11 +45,6 @@ public class User implements Serializable {
     @Column(name = "age")
     @Min(value = 1, message = "Age must be greater than zero!")
     private int age;
-
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_fk", referencedColumnName = "user_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
 
     @Temporal(TemporalType.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -67,18 +61,18 @@ public class User implements Serializable {
     @JoinColumn(name = "user_fk")
     private List<RefsValues> languages = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private ContactInfo userContactInfo;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Interests userInterests;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CareerInfo> careerInfos = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Education> educations = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private PersonalViews personalViews;
 }

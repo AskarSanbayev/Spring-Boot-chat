@@ -1,57 +1,58 @@
 package com.chat.cyber.config;
 
-import com.chat.cyber.security.jwt.JwtConfigurer;
-import com.chat.cyber.security.jwt.JwtTokenProvider;
+import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
+import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
+import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import org.keycloak.adapters.springsecurity.management.HttpSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
-import static com.chat.cyber.util.AppConstants.AUTHENTICATION_ENDPOINT;
 
+@KeycloakConfiguration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private JwtTokenProvider jwtTokenProvider;
-
+public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     @Autowired
-    public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) {
+        SimpleAuthorityMapper simpleAuthorityMapper = new SimpleAuthorityMapper();
+        simpleAuthorityMapper.setPrefix("ROLE_");
 
-    public JwtTokenProvider getJwtTokenProvider() {
-        return jwtTokenProvider;
+        KeycloakAuthenticationProvider keycloakAuthenticationProvider =
+                keycloakAuthenticationProvider();
+        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(simpleAuthorityMapper);
+        authenticationManagerBuilder.authenticationProvider(keycloakAuthenticationProvider);
     }
 
     @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Override
+    @ConditionalOnMissingBean(HttpSessionManager.class)
+    protected HttpSessionManager httpSessionManager() {
+        return new HttpSessionManager();
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(AUTHENTICATION_ENDPOINT).permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        super.configure(httpSecurity);
+        httpSecurity.authorizeRequests()
+                .antMatchers("/*").hasRole("user")
+                .anyRequest().permitAll()
+                .and().csrf().disable();
     }
 }

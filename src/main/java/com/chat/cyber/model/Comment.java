@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public class Comment implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
-    @SequenceGenerator(name = "comment_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_comment")
+    @SequenceGenerator(name = "sq_comment", allocationSize = 1)
     @Column(name = "record_id")
     private Long id;
 

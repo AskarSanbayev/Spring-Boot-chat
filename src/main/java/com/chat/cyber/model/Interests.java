@@ -15,7 +15,7 @@ public class Interests {
     @Column(name = "record_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_fk", referencedColumnName = "record_id", nullable = false)
     private User user;
 

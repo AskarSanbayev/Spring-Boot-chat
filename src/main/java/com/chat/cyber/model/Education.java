@@ -24,15 +24,15 @@ public class Education {
     private EducationType educationType;
 
     @ManyToOne
-    @Column(name = "country_fk")
+    @JoinColumn(name = "country_fk")
     private RefsValues country;
 
     @ManyToOne
-    @Column(name = "city_fk")
+    @JoinColumn(name = "city_fk")
     private RefsValues city;
 
     @ManyToOne
-    @Column(name = "school_fk")
+    @JoinColumn(name = "school_fk")
     private RefsValues schoolName;
 
     private String startDate;
@@ -45,14 +45,14 @@ public class Education {
     private String specialization;
 
     @ManyToOne
-    @Column(name = "faculty_fk")
+    @JoinColumn(name = "faculty_fk")
     private RefsValues faculty;
 
     @ManyToOne
-    @Column(name = "study_type_fk")
+    @JoinColumn(name = "study_type_fk")
     private RefsValues studyType;
 
     @ManyToOne
-    @Column(name = "status_type_fk")
+    @JoinColumn(name = "status_type_fk")
     private RefsValues status;
 }

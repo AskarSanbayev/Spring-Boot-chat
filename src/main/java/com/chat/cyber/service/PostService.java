@@ -1,9 +1,10 @@
 package com.chat.cyber.service;
 
 import com.chat.cyber.model.Post;
-import com.chat.cyber.security.jwt.JwtUser;
+
+import java.security.Principal;
 
 public interface PostService extends BaseService<Post, Long> {
 
-    void create(Post post, JwtUser jwtUser);
+    void create(Post post, Principal principal);
 }
