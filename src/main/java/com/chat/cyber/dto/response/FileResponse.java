@@ -1,4 +1,4 @@
-package com.chat.cyber.dto;
+package com.chat.cyber.dto.response;
 
 public class FileResponse {
     private String name;

@@ -1,6 +1,7 @@
 package com.chat.cyber.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +23,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_user")
     @SequenceGenerator(name = "sq_user", allocationSize = 1)
+    @JsonIgnore
     @Column(name = "record_id")
     private Long id;
 

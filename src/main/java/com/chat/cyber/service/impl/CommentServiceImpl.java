@@ -1,35 +1,34 @@
 package com.chat.cyber.service.impl;
 
+import com.chat.cyber.dto.request.CommentDto;
 import com.chat.cyber.exception.EntityNotFoundException;
 import com.chat.cyber.model.Comment;
 import com.chat.cyber.model.Post;
+import com.chat.cyber.model.User;
 import com.chat.cyber.repo.CommentRepository;
 import com.chat.cyber.service.CommentService;
 import com.chat.cyber.service.PostService;
+import com.chat.cyber.service.ProfileService;
 import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @Transactional
 public class CommentServiceImpl implements CommentService {
-
-    private final CommentRepository commentRepository;
-    private final UserService userService;
-    private final PostService postService;
-
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository,
-                              UserService userService,
-                              PostService postService) {
-        this.commentRepository = commentRepository;
-        this.userService = userService;
-        this.postService = postService;
-    }
+    private CommentRepository commentRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PostService postService;
+    @Autowired
+    private ProfileService profileService;
 
     @Override
     @Transactional(readOnly = true)
@@ -39,16 +38,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteById(Long id) {
-        if (commentRepository.findById(id).isPresent()) {
-            commentRepository.deleteById(id);
-        }
+        commentRepository.deleteById(id);
     }
 
     @Override
-    public void update(Comment comment) {
-        if (commentRepository.findById(comment.getId()).isPresent()) {
-            commentRepository.save(comment);
-        }
+    public void update(CommentDto commentDto) {
+        Comment comment = commentRepository.findById(commentDto.getId()).orElseThrow(EntityNotFoundException::new);
+        comment.setText(commentDto.getText());
+        comment.setLastModifiedDate(new Date());
+        commentRepository.save(comment);
     }
 
     @Override
@@ -57,16 +55,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void create(Comment comment, Long postId, Principal principal) {
-//        User author = userService.findByLogin(user.getUsername());
-        Post post = postService.findById(postId);
-//        comment.setAuthor(author);
+    public void create(CommentDto commentDto, Principal principal) {
+        User author = userService.findById(profileService.getUuid(principal));
+        Post post = postService.findById(commentDto.getPostUuid());
+        Comment comment = new Comment();
+        Date createDate = new Date();
+        comment.setCreationDate(createDate);
+        comment.setLastModifiedDate(createDate);
+        comment.setAuthor(author);
         comment.setPost(post);
+        comment.setText(commentDto.getText());
         commentRepository.save(comment);
-    }
-
-    @Override
-    public void create(Comment comment) {
-        throw new UnsupportedOperationException();
     }
 }

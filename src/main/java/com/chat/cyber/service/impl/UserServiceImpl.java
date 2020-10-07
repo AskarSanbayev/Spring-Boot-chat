@@ -28,31 +28,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        if (userRepository.findById(id).isPresent()) {
-            userRepository.deleteById(id);
-        }
-    }
-
-    @Override
-    public void create(User user) {
-        userRepository.save(user);
-    }
-
-    @Override
-    public void update(User user) {
-        if (userRepository.findById(user.getId()).isPresent()) {
-            userRepository.save(user);
-        }
-    }
-
-    @Override
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public User findById(String uuid) {
+        return userRepository.findByUuid(uuid).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
     public User findByLogin(String username) {
         return userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        throw new UnsupportedOperationException();
     }
 }

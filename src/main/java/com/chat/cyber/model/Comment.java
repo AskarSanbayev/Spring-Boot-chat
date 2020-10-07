@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -24,10 +24,10 @@ public class Comment implements Serializable {
     private String text;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "creation_date")
-    private LocalDateTime creationDate;
+    private Date creationDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_date")
-    private LocalDateTime lastModifiedDate;
+    private Date lastModifiedDate;
     @ManyToOne
     @JoinColumn(name = "post_fk", nullable = false)
     private Post post;

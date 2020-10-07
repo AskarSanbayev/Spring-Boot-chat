@@ -1,6 +1,6 @@
 package com.chat.cyber.controller;
 
-import com.chat.cyber.dto.FileResponse;
+import com.chat.cyber.dto.response.FileResponse;
 import com.chat.cyber.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -8,10 +8,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/image")
@@ -24,17 +25,17 @@ public class FileController {
         this.storageService = storageService;
     }
 
-//    @PostMapping
-//    public FileResponse uploadFile(@RequestParam("file") MultipartFile file,
-//                                   @AuthenticationPrincipal AuthUser principal) {
-//        String name = storageService.store(file, principal.getId());
-//
-//        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/download/")
-//                .path("name")
-//                .toUriString();
-//        return new FileResponse("name", uri, file.getContentType(), file.getSize());
-//    }
+    @PostMapping
+    public FileResponse uploadFile(@RequestParam("file") MultipartFile file,
+                                   Principal principal) {
+        String name = storageService.store(file, principal);
+
+        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/download/")
+                .path("name")
+                .toUriString();
+        return new FileResponse("name", uri, file.getContentType(), file.getSize());
+    }
 
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {

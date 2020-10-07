@@ -1,30 +1,32 @@
 package com.chat.cyber.service.impl;
 
+import com.chat.cyber.dto.request.PostDto;
 import com.chat.cyber.exception.EntityNotFoundException;
 import com.chat.cyber.model.Post;
+import com.chat.cyber.model.User;
 import com.chat.cyber.repo.PostRepository;
 import com.chat.cyber.service.PostService;
+import com.chat.cyber.service.ProfileService;
 import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
 public class PostServiceImpl implements PostService {
 
-    private final PostRepository postRepository;
-    private final UserService userService;
-
     @Autowired
-    public PostServiceImpl(PostRepository postRepository,
-                           UserService userService) {
-        this.postRepository = postRepository;
-        this.userService = userService;
-    }
+    private PostRepository postRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ProfileService profileService;
 
     @Override
     @Transactional(readOnly = true)
@@ -33,33 +35,39 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        if (postRepository.findById(id).isPresent()) {
-            postRepository.deleteById(id);
-        }
+    @Transactional(readOnly = true)
+    public List<Post> findAllByAuthor(Principal principal) {
+        return postRepository.findByAuthorUuid(profileService.getUuid(principal));
     }
 
     @Override
-    public void create(Post post) {
-        throw new UnsupportedOperationException();
+    public void deleteById(String uuid) {
+        postRepository.deleteByUuid(uuid);
     }
 
     @Override
-    public void update(Post post) {
-        if (postRepository.findById(post.getId()).isPresent()) {
-            postRepository.save(post);
-        }
-    }
-
-    @Override
-    public Post findById(Long id) {
-        return (postRepository.findById(id).orElseThrow(EntityNotFoundException::new));
-    }
-
-    @Override
-    public void create(Post post, Principal principal) {
-//        User author = userService.findByLogin(user.getUsername());
-//        post.setAuthor(author);
+    public void create(String text, Principal principal) {
+        User author = userService.findById(profileService.getUuid(principal));
+        Post post = new Post();
+        Date createDate = new Date();
+        post.setText(text);
+        post.setUuid(UUID.randomUUID().toString());
+        post.setCreationDate(createDate);
+        post.setLastModifiedDate(createDate);
+        post.setAuthor(author);
         postRepository.save(post);
+    }
+
+    @Override
+    public void update(PostDto postDto) {
+        Post post = postRepository.findByUuid(postDto.getUuid()).orElseThrow(EntityNotFoundException::new);
+        post.setText(postDto.getText());
+        post.setLastModifiedDate(new Date());
+        postRepository.save(post);
+    }
+
+    @Override
+    public Post findById(String uuid) {
+        return (postRepository.findByUuid(uuid).orElseThrow(EntityNotFoundException::new));
     }
 }

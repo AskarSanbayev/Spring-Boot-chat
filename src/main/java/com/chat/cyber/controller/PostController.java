@@ -1,9 +1,8 @@
 package com.chat.cyber.controller;
 
-import com.chat.cyber.model.Post;
+import com.chat.cyber.dto.request.PostDto;
 import com.chat.cyber.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,17 +20,17 @@ public class PostController {
     }
 
     @PostMapping
-    public void createPost(@RequestBody Post post, @AuthenticationPrincipal Principal principal) {
-        postService.create(post, principal);
+    public void createPost(String text, Principal principal) {
+        postService.create(text, principal);
     }
 
     @PutMapping
-    public void updatePost(@RequestBody Post post) {
+    public void updatePost(@RequestBody PostDto post) {
         postService.update(post);
     }
 
     @DeleteMapping
-    public void deletePost(@RequestBody Post post) {
-        postService.deleteById(post.getId());
+    public void deletePost(String uuid) {
+        postService.deleteById(uuid);
     }
 }

@@ -5,7 +5,10 @@ import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
@@ -24,24 +27,8 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping("/{id}/friends")
-    public Set<User> findAllFriends(@PathVariable("id") Long id) {
-        return userService.findById(id).getFriendList();
+    @GetMapping("/{uuid}/friends")
+    public Set<User> findAllFriends(@PathVariable("uuid") String uuid) {
+        return userService.findById(uuid).getFriendList();
     }
-
-    @PostMapping
-    public void createUser(@RequestBody User user) {
-        userService.create(user);
-    }
-
-    @PutMapping
-    public void updateUser(@RequestBody User user) {
-        userService.update(user);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id") Long id) {
-        userService.deleteById(id);
-    }
-
 }

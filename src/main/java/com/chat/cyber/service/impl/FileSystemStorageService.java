@@ -3,6 +3,7 @@ package com.chat.cyber.service.impl;
 import com.chat.cyber.config.StorageProperties;
 import com.chat.cyber.exception.FileNotFoundException;
 import com.chat.cyber.exception.StorageException;
+import com.chat.cyber.service.ProfileService;
 import com.chat.cyber.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -18,16 +19,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.Objects;
 
 @Service
 public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
+    private final ProfileService profileService;
 
     @Autowired
-    public FileSystemStorageService(StorageProperties properties) {
+    public FileSystemStorageService(StorageProperties properties, ProfileService profileService) {
         this.rootLocation = Paths.get(properties.getLocation());
+        this.profileService = profileService;
     }
 
     @PostConstruct
@@ -40,14 +44,15 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public String store(MultipartFile file, Long id) {
+    public String store(MultipartFile file, Principal principal) {
         Objects.requireNonNull(file);
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        String uuid = profileService.getUuid(principal);
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file " + filename);
         }
         try (InputStream inputStream = file.getInputStream()) {
-            Path targetLocation = this.rootLocation.resolve(id + ".png");
+            Path targetLocation = this.rootLocation.resolve(uuid + ".png");
             Files.copy(inputStream, targetLocation,
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
