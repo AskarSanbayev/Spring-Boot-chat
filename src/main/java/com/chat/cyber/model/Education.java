@@ -1,5 +1,7 @@
 package com.chat.cyber.model;
 
+import com.chat.cyber.model.enums.EducationType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +19,7 @@ public class Education {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 

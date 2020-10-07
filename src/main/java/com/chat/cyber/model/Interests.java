@@ -1,5 +1,6 @@
 package com.chat.cyber.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ public class Interests {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_fk", referencedColumnName = "record_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     private String activities;

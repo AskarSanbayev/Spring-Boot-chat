@@ -1,4 +1,4 @@
-package com.chat.cyber.model;
+package com.chat.cyber.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

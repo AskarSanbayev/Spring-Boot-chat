@@ -1,5 +1,6 @@
 package com.chat.cyber.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ public class CareerInfo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_fk", nullable = false)
+    @JsonIgnore
     private User user;
 
     private String workPlaceTitle;
