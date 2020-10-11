@@ -2,7 +2,6 @@ package com.chat.cyber.controller;
 
 import com.chat.cyber.dto.request.PostDto;
 import com.chat.cyber.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,6 @@ public class PostController {
 
     private final PostService postService;
 
-    @Autowired
     public PostController(PostService postService) {
         this.postService = postService;
     }

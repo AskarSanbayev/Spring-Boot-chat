@@ -68,6 +68,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post findById(String uuid) {
-        return (postRepository.findByUuid(uuid).orElseThrow(EntityNotFoundException::new));
+        return postRepository.findByUuid(uuid).orElseThrow(EntityNotFoundException::new);
     }
 }

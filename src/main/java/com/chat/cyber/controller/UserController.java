@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -28,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/{uuid}/friends")
-    public Set<User> findAllFriends(@PathVariable("uuid") String uuid) {
+    public List<User> findAllFriends(@PathVariable("uuid") String uuid) {
         return userService.findById(uuid).getFriendList();
     }
 }

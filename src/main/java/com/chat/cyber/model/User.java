@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -57,7 +56,7 @@ public class User implements Serializable {
             name = "friend_list",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private Set<User> friendList;
+    private List<User> friendList;
 
     @OneToMany
     @JoinColumn(name = "user_fk")
