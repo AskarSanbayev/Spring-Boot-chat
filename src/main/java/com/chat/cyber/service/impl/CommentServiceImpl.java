@@ -1,10 +1,11 @@
 package com.chat.cyber.service.impl;
 
 import com.chat.cyber.dto.request.CommentDto;
-import com.chat.cyber.exception.EntityNotFoundException;
+import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.Comment;
 import com.chat.cyber.model.Post;
 import com.chat.cyber.model.User;
+import com.chat.cyber.model.UserLike;
 import com.chat.cyber.repo.CommentRepository;
 import com.chat.cyber.service.CommentService;
 import com.chat.cyber.service.PostService;
@@ -43,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void update(CommentDto commentDto) {
-        Comment comment = commentRepository.findById(commentDto.getId()).orElseThrow(EntityNotFoundException::new);
+        Comment comment = commentRepository.findById(commentDto.getId()).orElseThrow(RestException::new);
         comment.setText(commentDto.getText());
         comment.setLastModifiedDate(new Date());
         commentRepository.save(comment);
@@ -51,12 +52,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment findById(Long id) {
-        return commentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return commentRepository.findById(id).orElseThrow(RestException::new);
     }
 
     @Override
     public void create(CommentDto commentDto, Principal principal) {
-        User author = userService.findById(profileService.getUuid(principal));
+        User author = userService.findByUUid(profileService.getUuid(principal));
         Post post = postService.findById(commentDto.getPostUuid());
         Comment comment = new Comment();
         Date createDate = new Date();
@@ -65,6 +66,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setAuthor(author);
         comment.setPost(post);
         comment.setText(commentDto.getText());
+        comment.setUserLike(new UserLike());
         commentRepository.save(comment);
     }
 }

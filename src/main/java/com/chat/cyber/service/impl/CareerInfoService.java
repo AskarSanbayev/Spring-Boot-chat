@@ -1,7 +1,7 @@
 package com.chat.cyber.service.impl;
 
 import com.chat.cyber.dto.request.CareerInfoDto;
-import com.chat.cyber.exception.EntityNotFoundException;
+import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.CareerInfo;
 import com.chat.cyber.model.RefsValues;
 import com.chat.cyber.model.User;
@@ -39,7 +39,7 @@ public class CareerInfoService {
         if (careerInfoDto.getId() == null) {
             careerInfo = new CareerInfo();
         } else {
-            careerInfo = careerInfoRepo.findById(careerInfoDto.getId()).orElseThrow(EntityNotFoundException::new);
+            careerInfo = careerInfoRepo.findById(careerInfoDto.getId()).orElseThrow(RestException::new);
         }
         User user = userRepository.findByUuid(profileService.getUuid(principal)).orElse(null);
         careerInfo.setCity(city);

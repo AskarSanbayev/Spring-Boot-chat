@@ -2,13 +2,12 @@ package com.chat.cyber.controller;
 
 import com.chat.cyber.dto.request.PostDto;
 import com.chat.cyber.service.PostService;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @RestController
-@Validated
+@RequestMapping("/user/post")
 public class PostController {
 
     private final PostService postService;
@@ -18,8 +17,8 @@ public class PostController {
     }
 
     @PostMapping
-    public void createPost(String text, Principal principal) {
-        postService.create(text, principal);
+    public void createPost(Principal principal, @RequestBody PostDto postDto) {
+        postService.create(postDto, principal);
     }
 
     @PutMapping
@@ -27,8 +26,8 @@ public class PostController {
         postService.update(post);
     }
 
-    @DeleteMapping
-    public void deletePost(String uuid) {
+    @DeleteMapping(value = "/{uuid}")
+    public void deletePost(@PathVariable String uuid) {
         postService.deleteById(uuid);
     }
 }

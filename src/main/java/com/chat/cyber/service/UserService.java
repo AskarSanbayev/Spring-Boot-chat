@@ -12,6 +12,6 @@ public interface UserService {
 
     void deleteById(String id);
 
-    User findById(String id);
+    User findByUUid(String uuid);
 
 }

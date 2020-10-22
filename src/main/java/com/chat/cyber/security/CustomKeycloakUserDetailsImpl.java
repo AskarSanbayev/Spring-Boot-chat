@@ -51,7 +51,7 @@ public class CustomKeycloakUserDetailsImpl implements CustomUserDetails {
         IDToken idToken = principal.getAccount().getKeycloakSecurityContext().getIdToken();
         this.username = idToken.getPreferredUsername();
         this.email = idToken.getEmail();
-        this.uuid = "test";
+        this.uuid = idToken.getSubject();
         this.accountNonExpired = idToken.isExpired();
         this.authorities = principal.getAuthorities();
         this.enabled = idToken.isActive();

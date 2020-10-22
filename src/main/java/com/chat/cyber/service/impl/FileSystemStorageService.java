@@ -1,8 +1,7 @@
 package com.chat.cyber.service.impl;
 
 import com.chat.cyber.config.StorageProperties;
-import com.chat.cyber.exception.FileNotFoundException;
-import com.chat.cyber.exception.StorageException;
+import com.chat.cyber.exception.UnexpectedException;
 import com.chat.cyber.service.ProfileService;
 import com.chat.cyber.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class FileSystemStorageService implements StorageService {
         try {
             Files.createDirectories(rootLocation);
         } catch (IOException e) {
-            throw new StorageException("Could not initialize storage location", e);
+            throw new UnexpectedException("Could not initialize storage location", e);
         }
     }
 
@@ -49,14 +48,14 @@ public class FileSystemStorageService implements StorageService {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String uuid = profileService.getUuid(principal);
         if (file.isEmpty()) {
-            throw new StorageException("Failed to store empty file " + filename);
+            throw new UnexpectedException("Failed to store empty file " + filename);
         }
         try (InputStream inputStream = file.getInputStream()) {
             Path targetLocation = this.rootLocation.resolve(uuid + ".png");
             Files.copy(inputStream, targetLocation,
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new StorageException("Failed to store file " + filename, e);
+            throw new UnexpectedException("Failed to store file " + filename, e);
         }
         return filename;
     }
@@ -69,10 +68,10 @@ public class FileSystemStorageService implements StorageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new FileNotFoundException("Could not read file: " + filename);
+                throw new UnexpectedException("Could not read file: " + filename);
             }
         } catch (IOException e) {
-            throw new FileNotFoundException("Could not read file: " + filename, e);
+            throw new UnexpectedException("Could not read file: " + filename, e);
         }
     }
 
@@ -82,7 +81,7 @@ public class FileSystemStorageService implements StorageService {
             Path file = load(fileName);
             Files.delete(file);
         } catch (IOException e) {
-            throw new StorageException("Failed to delete file " + fileName, e);
+            throw new UnexpectedException("Failed to delete file " + fileName, e);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.chat.cyber.service.impl;
 
-import com.chat.cyber.exception.EntityNotFoundException;
+import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.User;
 import com.chat.cyber.repo.UserRepository;
 import com.chat.cyber.service.UserService;
@@ -28,13 +28,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(String uuid) {
-        return userRepository.findByUuid(uuid).orElseThrow(EntityNotFoundException::new);
+    public User findByUUid(String uuid) {
+        return userRepository.findByUuid(uuid).orElseThrow(RestException::new);
     }
 
     @Override
     public User findByLogin(String username) {
-        return userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        return userRepository.findByUsername(username).orElseThrow(RestException::new);
     }
 
     @Override

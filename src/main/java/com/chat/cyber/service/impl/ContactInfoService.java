@@ -1,7 +1,7 @@
 package com.chat.cyber.service.impl;
 
 import com.chat.cyber.dto.request.ContactInfoDto;
-import com.chat.cyber.exception.EntityNotFoundException;
+import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.ContactInfo;
 import com.chat.cyber.model.RefsValues;
 import com.chat.cyber.model.User;
@@ -34,7 +34,7 @@ public class ContactInfoService {
         if (contactInfoDto.getId() == null) {
             contactInfo = new ContactInfo();
         } else {
-            contactInfo = contactInfoRepo.findById(contactInfoDto.getId()).orElseThrow(EntityNotFoundException::new);
+            contactInfo = contactInfoRepo.findById(contactInfoDto.getId()).orElseThrow(RestException::new);
         }
         User user = userRepository.findByUuid(profileService.getUuid(principal)).orElse(null);
         contactInfo.setCity(city);

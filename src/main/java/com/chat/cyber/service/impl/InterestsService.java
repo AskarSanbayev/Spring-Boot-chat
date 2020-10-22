@@ -1,6 +1,6 @@
 package com.chat.cyber.service.impl;
 
-import com.chat.cyber.exception.EntityNotFoundException;
+import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.Interests;
 import com.chat.cyber.model.User;
 import com.chat.cyber.repo.InterestsRepo;
@@ -26,7 +26,7 @@ public class InterestsService {
         if (interests.getId() == null) {
             interestSave = new Interests();
         } else {
-            interestSave = interestsRepo.findById(interests.getId()).orElseThrow(EntityNotFoundException::new);
+            interestSave = interestsRepo.findById(interests.getId()).orElseThrow(RestException::new);
         }
         User user = userRepository.findByUuid(profileService.getUuid(principal)).orElse(null);
         interestSave.setUser(user);

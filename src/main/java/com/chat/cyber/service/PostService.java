@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PostService {
 
-    void create(String text, Principal principal);
+    void create(PostDto postDto, Principal principal);
 
     List<Post> findAllByAuthor(Principal principal);
 

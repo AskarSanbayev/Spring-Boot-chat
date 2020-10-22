@@ -32,7 +32,6 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public CustomUserDetails getUserDetails(Principal principal) {
-        if (principal == null) return null;
         return new CustomKeycloakUserDetailsImpl((KeycloakAuthenticationToken) principal);
     }
 

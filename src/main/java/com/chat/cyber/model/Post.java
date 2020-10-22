@@ -41,6 +41,11 @@ public class Post implements Serializable {
     @JoinColumn(name = "author_id")
     private User author;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "like_fk", referencedColumnName = "record_id")
+    @JsonIgnore
+    private UserLike userLike;
+
     @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, targetEntity = Comment.class)
     private List<Comment> postComments;
 }

@@ -1,7 +1,7 @@
 package com.chat.cyber.service.impl;
 
 import com.chat.cyber.dto.request.PersonalViewsDto;
-import com.chat.cyber.exception.EntityNotFoundException;
+import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.PersonalViews;
 import com.chat.cyber.model.RefsValues;
 import com.chat.cyber.model.User;
@@ -38,7 +38,7 @@ public class PersonalViewsService {
         if (personalViewsDto.getId() == null) {
             personalViews = new PersonalViews();
         } else {
-            personalViews = personalViewsRepo.findById(personalViewsDto.getId()).orElseThrow(EntityNotFoundException::new);
+            personalViews = personalViewsRepo.findById(personalViewsDto.getId()).orElseThrow(RestException::new);
         }
         User user = userRepository.findByUuid(profileService.getUuid(principal)).orElse(null);
         personalViews.setUser(user);

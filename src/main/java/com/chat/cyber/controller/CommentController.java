@@ -1,16 +1,14 @@
 package com.chat.cyber.controller;
 
 import com.chat.cyber.dto.request.CommentDto;
-import com.chat.cyber.model.Comment;
 import com.chat.cyber.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @RestController
-@Validated
+@RequestMapping("/user/comment")
 public class CommentController {
 
     private final CommentService commentService;
@@ -20,7 +18,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/{postId}")
+    @PostMapping
     public void createComment(@RequestBody CommentDto comment,
                               Principal principal) {
         commentService.create(comment, principal);
@@ -31,9 +29,9 @@ public class CommentController {
         commentService.update(comment);
     }
 
-    @DeleteMapping
-    public void deleteComment(@RequestBody Comment comment) {
-        commentService.deleteById(comment.getId());
+    @DeleteMapping(value = "/{id}")
+    public void deleteComment(@PathVariable Long id) {
+        commentService.deleteById(id);
     }
 
 }
