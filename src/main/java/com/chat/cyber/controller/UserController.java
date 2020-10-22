@@ -1,7 +1,10 @@
 package com.chat.cyber.controller;
 
 import com.chat.cyber.dto.request.UserLikeDto;
+import com.chat.cyber.dto.request.userinfo.BaseUserInfoDto;
 import com.chat.cyber.model.User;
+import com.chat.cyber.model.enums.RefsCodeName;
+import com.chat.cyber.service.AdditionalUserInfoService;
 import com.chat.cyber.service.UserLikeService;
 import com.chat.cyber.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserLikeService userLikeService;
+    @Autowired
+    private AdditionalUserInfoService additionalUserInfoService;
 
     @PreAuthorize("hasRole('ROLE_user')")
     @GetMapping
@@ -37,7 +42,13 @@ public class UserController {
     }
 
     @PutMapping("/like")
-    public void findUser(@RequestBody UserLikeDto userLikeDto, Principal principal) {
+    public void updateLikeAndDislike(@RequestBody UserLikeDto userLikeDto, Principal principal) {
         userLikeService.update(userLikeDto, principal);
+    }
+
+    @PutMapping("/info")
+    public void getAdditionalUserInfo(@RequestParam(name = "codeName") RefsCodeName refsCodeName,
+                                      @RequestBody List<BaseUserInfoDto> baseUserInfoDto, Principal principal) {
+        additionalUserInfoService.save(refsCodeName, baseUserInfoDto, principal);
     }
 }

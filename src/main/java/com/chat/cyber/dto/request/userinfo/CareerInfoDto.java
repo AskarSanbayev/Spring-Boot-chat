@@ -1,4 +1,4 @@
-package com.chat.cyber.dto.request;
+package com.chat.cyber.dto.request.userinfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CareerInfoDto {
-    private Long id;
+public class CareerInfoDto extends BaseUserInfoDto {
     private String workPlaceTitle;
     private Long countryCode;
     private Long cityCode;

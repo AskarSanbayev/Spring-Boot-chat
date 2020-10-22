@@ -1,4 +1,4 @@
-package com.chat.cyber.dto.request;
+package com.chat.cyber.dto.request.userinfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PersonalViewsDto {
+public class PersonalViewsDto extends BaseUserInfoDto {
 
-    private Long id;
     private Long politicalViewsCode;
     private Long personalPriorityCode;
     private Long religionCode;

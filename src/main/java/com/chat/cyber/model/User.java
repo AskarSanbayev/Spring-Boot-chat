@@ -62,18 +62,38 @@ public class User implements Serializable {
     @JoinColumn(name = "user_fk")
     private List<RefsValues> languages = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private ContactInfo userContactInfo;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Interests userInterests;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CareerInfo> careerInfos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private List<Education> educations = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private PersonalViews personalViews;
+
+    public void addCareerInfo(CareerInfo careerInfo) {
+        careerInfos.add(careerInfo);
+        careerInfo.setUser(this);
+    }
+
+    public void removeCareerInfo(CareerInfo careerInfo) {
+        careerInfos.remove(careerInfo);
+        careerInfo.setUser(null);
+    }
+
+    public void addEducation(Education education) {
+        educations.add(education);
+        education.setUser(this);
+    }
+
+    public void removeEducation(Education education) {
+        educations.remove(education);
+        education.setUser(null);
+    }
 }

@@ -1,4 +1,4 @@
-package com.chat.cyber.dto.request;
+package com.chat.cyber.dto.request.userinfo;
 
 import com.chat.cyber.model.enums.EducationType;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class EducationDto {
-    private Long id;
+public class EducationDto extends BaseUserInfoDto{
     private EducationType educationType;
     private Long countryCode;
     private Long cityCode;

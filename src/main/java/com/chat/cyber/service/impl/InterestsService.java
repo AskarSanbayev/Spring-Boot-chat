@@ -1,43 +1,42 @@
 package com.chat.cyber.service.impl;
 
+import com.chat.cyber.dto.request.userinfo.BaseUserInfoDto;
+import com.chat.cyber.dto.request.userinfo.InterestsDto;
 import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.Interests;
-import com.chat.cyber.model.User;
+import com.chat.cyber.model.enums.RefsCodeName;
 import com.chat.cyber.repo.InterestsRepo;
-import com.chat.cyber.repo.UserRepository;
-import com.chat.cyber.service.ProfileService;
+import com.chat.cyber.service.AdditionalUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-public class InterestsService {
+public class InterestsService implements AdditionalUserInfoService {
 
     @Autowired
     private InterestsRepo interestsRepo;
-    @Autowired
-    private ProfileService profileService;
-    @Autowired
-    private UserRepository userRepository;
 
-    public void save(Interests interests, Principal principal) {
-        Interests interestSave;
-        if (interests.getId() == null) {
-            interestSave = new Interests();
-        } else {
-            interestSave = interestsRepo.findById(interests.getId()).orElseThrow(RestException::new);
+    public void save(RefsCodeName refsCodeName, List<BaseUserInfoDto> userInfoDtos, Principal principal) {
+        if (!userInfoDtos.isEmpty() && userInfoDtos.get(0).getId() != null) {
+            InterestsDto interestsDto = (InterestsDto) userInfoDtos.get(0);
+            Optional<Interests> interestSave = interestsRepo.findById(interestsDto.getId());
+            if (!interestSave.isPresent()) {
+                throw new RestException();
+            }
+            Interests interests = interestSave.get();
+            interests.setAboutInterests(interestsDto.getAboutInterests());
+            interests.setAboutMe(interestsDto.getAboutMe());
+            interests.setActivities(interestsDto.getActivities());
+            interests.setFavoriteBooks(interestsDto.getFavoriteBooks());
+            interests.setFavoriteMovies(interestsDto.getFavoriteMovies());
+            interests.setFavoriteMusic(interestsDto.getFavoriteMusic());
+            interests.setFavoriteQuotes(interestsDto.getFavoriteQuotes());
+            interests.setFavoriteShows(interestsDto.getFavoriteShows());
+            interestsRepo.save(interests);
         }
-        User user = userRepository.findByUuid(profileService.getUuid(principal)).orElse(null);
-        interestSave.setUser(user);
-        interestSave.setAboutInterests(interests.getAboutInterests());
-        interestSave.setAboutMe(interests.getAboutMe());
-        interestSave.setActivities(interests.getActivities());
-        interestSave.setFavoriteBooks(interests.getFavoriteBooks());
-        interestSave.setFavoriteMovies(interests.getFavoriteMovies());
-        interestSave.setFavoriteMusic(interests.getFavoriteMusic());
-        interestSave.setFavoriteQuotes(interests.getFavoriteQuotes());
-        interestSave.setFavoriteShows(interests.getFavoriteShows());
-        interestsRepo.save(interestSave);
     }
 }
