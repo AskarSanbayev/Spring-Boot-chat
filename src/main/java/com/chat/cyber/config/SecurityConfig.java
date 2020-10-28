@@ -23,6 +23,10 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+
+    @Autowired
+    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) {
         SimpleAuthorityMapper simpleAuthorityMapper = new SimpleAuthorityMapper();
@@ -32,7 +36,11 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 keycloakAuthenticationProvider();
         keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(simpleAuthorityMapper);
         authenticationManagerBuilder.authenticationProvider(keycloakAuthenticationProvider);
-
+        try {
+            keycloakAuthenticationProcessingFilter().setAuthenticationSuccessHandler(customAuthenticationSuccessHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Bean

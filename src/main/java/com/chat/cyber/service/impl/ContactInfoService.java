@@ -4,6 +4,7 @@ import com.chat.cyber.dto.request.userinfo.BaseUserInfoDto;
 import com.chat.cyber.dto.request.userinfo.ContactInfoDto;
 import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.ContactInfo;
+import com.chat.cyber.model.Interests;
 import com.chat.cyber.model.RefsValues;
 import com.chat.cyber.model.enums.RefsCodeName;
 import com.chat.cyber.repo.ContactInfoRepo;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContactInfoService implements AdditionalUserInfoService {
@@ -30,6 +32,7 @@ public class ContactInfoService implements AdditionalUserInfoService {
             RefsValues city = refsValuesService.findByIdAndRefsCodeName(contactInfoDto.getCityCode(), RefsCodeName.CITY).orElse(null);
             RefsValues country = refsValuesService.findByIdAndRefsCodeName(contactInfoDto.getCityCode(), RefsCodeName.COUNTRY).orElse(null);
             ContactInfo contactInfo = contactInfoRepo.findById(contactInfoDto.getId()).orElseThrow(RestException::new);
+            contactInfo.setId(contactInfoDto.getId());
             contactInfo.setCity(city);
             contactInfo.setCountry(country);
             contactInfo.setFlat(contactInfoDto.getFlat());

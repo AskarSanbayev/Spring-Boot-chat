@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class InterestsService implements AdditionalUserInfoService {
@@ -23,11 +22,7 @@ public class InterestsService implements AdditionalUserInfoService {
     public void save(RefsCodeName refsCodeName, List<BaseUserInfoDto> userInfoDtos, Principal principal) {
         if (!userInfoDtos.isEmpty() && userInfoDtos.get(0).getId() != null) {
             InterestsDto interestsDto = (InterestsDto) userInfoDtos.get(0);
-            Optional<Interests> interestSave = interestsRepo.findById(interestsDto.getId());
-            if (!interestSave.isPresent()) {
-                throw new RestException();
-            }
-            Interests interests = interestSave.get();
+            Interests interests = interestsRepo.findById(interestsDto.getId()).orElseThrow(RestException::new);
             interests.setAboutInterests(interestsDto.getAboutInterests());
             interests.setAboutMe(interestsDto.getAboutMe());
             interests.setActivities(interestsDto.getActivities());

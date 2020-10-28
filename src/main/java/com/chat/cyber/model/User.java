@@ -44,7 +44,6 @@ public class User implements Serializable {
     private String email;
 
     @Column(name = "age")
-    @Min(value = 1, message = "Age must be greater than zero!")
     private int age;
 
     @Temporal(TemporalType.DATE)
