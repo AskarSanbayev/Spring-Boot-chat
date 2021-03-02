@@ -15,7 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/api/image")
 public class FileController {
 
     private final StorageService storageService;

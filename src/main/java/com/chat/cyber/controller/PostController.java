@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/user/post")
+@RequestMapping("/api/user/post")
 public class PostController {
 
     private final PostService postService;

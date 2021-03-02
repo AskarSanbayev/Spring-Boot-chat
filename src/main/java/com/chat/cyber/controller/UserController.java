@@ -7,15 +7,19 @@ import com.chat.cyber.model.enums.RefsCodeName;
 import com.chat.cyber.service.AdditionalUserInfoService;
 import com.chat.cyber.service.UserLikeService;
 import com.chat.cyber.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 import java.util.List;
 
+@Api(value = "Страница пользователя", tags = {"Страница пользователя"})
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -25,30 +29,33 @@ public class UserController {
     @Autowired
     private AdditionalUserInfoService additionalUserInfoService;
 
-    @PreAuthorize("hasRole('ROLE_user')")
+    @ApiOperation(value = "Получение всех пользователей", notes = "Получение всех пользователей")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public List<User> findAll() {
         return userService.findAll();
     }
 
+    @ApiOperation(value = "Получение друзей", notes = "Получение друзей")
     @GetMapping("/{uuid}/friends")
     public List<User> findAllFriends(@PathVariable("uuid") String uuid) {
         return userService.findByUUid(uuid).getFriendList();
     }
 
+    @ApiOperation(value = "Получение пользователя по UUID", notes = "Получение пользователя по UUID")
     @GetMapping("/{uuid}")
     public User findUser(@PathVariable("uuid") String uuid) {
         return userService.findByUUid(uuid);
     }
 
     @PutMapping("/like")
-    public void updateLikeAndDislike(@RequestBody UserLikeDto userLikeDto, Principal principal) {
+    public void updateLikeAndDislike(@ApiIgnore Principal principal, @RequestBody UserLikeDto userLikeDto) {
         userLikeService.update(userLikeDto, principal);
     }
 
     @PutMapping("/info")
-    public void getAdditionalUserInfo(@RequestParam(name = "codeName") RefsCodeName refsCodeName,
-                                      @RequestBody List<BaseUserInfoDto> baseUserInfoDto, Principal principal) {
+    public void addAdditionalUserInfo(@ApiIgnore Principal principal, @RequestParam(name = "codeName") RefsCodeName refsCodeName,
+                                      @RequestBody List<BaseUserInfoDto> baseUserInfoDto) {
         additionalUserInfoService.save(refsCodeName, baseUserInfoDto, principal);
     }
 }
