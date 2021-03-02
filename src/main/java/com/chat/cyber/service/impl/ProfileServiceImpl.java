@@ -1,9 +1,8 @@
 package com.chat.cyber.service.impl;
 
-import com.chat.cyber.security.CustomKeycloakUserDetailsImpl;
 import com.chat.cyber.security.CustomUserDetails;
 import com.chat.cyber.service.ProfileService;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
@@ -32,16 +31,17 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public CustomUserDetails getUserDetails(Principal principal) {
-        return new CustomKeycloakUserDetailsImpl((KeycloakAuthenticationToken) principal);
+        if (principal == null) return null;
+        return (CustomUserDetails) ((Authentication) principal).getPrincipal();
     }
 
     @Override
     public Collection<String> getUserRoles(Principal principal) {
         if (principal == null) {
-            return Arrays.asList("none");
+            return Arrays.asList("empty");
         } else {
             Set<String> roles = new HashSet<String>();
-            Collection<? extends GrantedAuthority> authorities = getUserDetails(principal).getAuthorities();
+            Collection<? extends GrantedAuthority> authorities = ((Authentication) principal).getAuthorities();
             for (GrantedAuthority grantedAuthority : authorities) {
                 roles.add(grantedAuthority.getAuthority());
             }

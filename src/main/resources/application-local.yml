@@ -1,0 +1,66 @@
+logging:
+  level:
+    com:
+      zaxxer:
+        hikari:
+          HikariConfig: DEBUG
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+spring:
+  datasource:
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 30000
+      maxLifetime: 2000000
+      maximumPoolSize: 20
+      minimumIdle: 5
+      poolName: SpringBootJPAHikariCP
+    password: 123
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+  flyway:
+    enabled: false
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show_sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: chat-app
+            client-secret: 76345d0a-009d-42ba-8540-96ca8b37c275
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8888/login/oauth2/code/keycloak
+            scope: openid
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8080/auth/realms/chat/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/auth/realms/chat/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/auth/realms/chat/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/auth/realms/chat/protocol/openid-connect/certs
+            user-name-attribute: sub
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+server:
+  port: 8888
+
+my:
+  authorization-url: /api/oauth2/authorization
+  logout-url: /api/oauth2/logout
+
+storage:
+  location: ./uploads
+
+
