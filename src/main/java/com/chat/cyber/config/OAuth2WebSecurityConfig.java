@@ -33,7 +33,8 @@ public class OAuth2WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/api/login", "/api/oauth2/authorization/**").permitAll()
+                .antMatchers("/api/login", "/api/oauth2/authorization/**",
+                        "/api/user/registration").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()

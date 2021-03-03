@@ -2,6 +2,7 @@ package com.chat.cyber.service.impl;
 
 import com.chat.cyber.dto.request.PostDto;
 import com.chat.cyber.exception.RestException;
+import com.chat.cyber.exception.UnexpectedException;
 import com.chat.cyber.model.Post;
 import com.chat.cyber.model.User;
 import com.chat.cyber.model.UserLike;
@@ -48,7 +49,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void create(PostDto postDto, Principal principal) {
-        User author = userService.findByUUid(profileService.getUuid(principal));
+        User author = userService.findByUUid(profileService.getUuid(principal)).orElseThrow(RestException::new);
         Post post = new Post();
         Date createDate = new Date();
         post.setText(postDto.getText());

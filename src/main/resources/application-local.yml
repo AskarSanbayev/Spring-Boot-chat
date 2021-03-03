@@ -60,6 +60,12 @@ my:
   authorization-url: /api/oauth2/authorization
   logout-url: /api/oauth2/logout
 
+keycloak:
+  realm-name: chat
+  server-url: http://localhost:8080/auth
+  username: user
+  password: 1234
+
 storage:
   location: ./uploads
 

@@ -57,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void create(CommentDto commentDto, Principal principal) {
-        User author = userService.findByUUid(profileService.getUuid(principal));
+        User author = userService.findByUUid(profileService.getUuid(principal)).orElseThrow(RestException::new);
         Post post = postService.findById(commentDto.getPostUuid());
         Comment comment = new Comment();
         Date createDate = new Date();

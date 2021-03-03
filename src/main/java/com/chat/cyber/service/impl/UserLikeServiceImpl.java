@@ -31,16 +31,14 @@ public class UserLikeServiceImpl implements UserLikeService {
         if (userLikeDto.getUserLikeType() == null && (userLikeDto.getPostUuid() == null || userLikeDto.getCommentId() == null)) {
             throw new RestException();
         }
-        if (userLikeDto.getPostUuid() != null) {
-            updateLikeAndDisLike(true, userLikeDto, principal);
-        } else {
-            updateLikeAndDisLike(false, userLikeDto, principal);
-        }
+        updateLikeAndDisLike(userLikeDto.getPostUuid() != null, userLikeDto, principal);
     }
 
+    // TODO
+    // mb change to procedure
     private void updateLikeAndDisLike(boolean isPost, UserLikeDto userLikeDto, Principal principal) {
         String uuid = profileService.getUuid(principal);
-        User user = userService.findByUUid(uuid);
+        User user = userService.findByUUid(uuid).orElseThrow(RestException::new);
         UserLike userLike = isPost ? postService.findById(userLikeDto.getPostUuid()).getUserLike()
                 : commentService.findById(userLikeDto.getCommentId()).getUserLike();
         if (userLikeDto.getUserLikeType() == UserLikeType.LIKE) {

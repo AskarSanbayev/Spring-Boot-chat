@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Api(value = "Страница пользователя", tags = {"Страница пользователя"})
 @RestController
@@ -39,13 +41,14 @@ public class UserController {
     @ApiOperation(value = "Получение друзей", notes = "Получение друзей")
     @GetMapping("/{uuid}/friends")
     public List<User> findAllFriends(@PathVariable("uuid") String uuid) {
-        return userService.findByUUid(uuid).getFriendList();
+        Optional<User> user = userService.findByUUid(uuid);
+        return user.isPresent() ? user.get().getFriendList() : Collections.emptyList();
     }
 
     @ApiOperation(value = "Получение пользователя по UUID", notes = "Получение пользователя по UUID")
     @GetMapping("/{uuid}")
     public User findUser(@PathVariable("uuid") String uuid) {
-        return userService.findByUUid(uuid);
+        return userService.findByUUid(uuid).orElse(null);
     }
 
     @PutMapping("/like")
