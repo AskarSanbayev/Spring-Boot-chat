@@ -10,6 +10,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
@@ -28,10 +29,12 @@ public class RegisterServiceImpl implements RegistrationService {
 
     private final Keycloak keycloak;
     private final UserService userService;
+    private final MessageSource messageSource;
 
-    public RegisterServiceImpl(Keycloak keycloak, UserService userService) {
+    public RegisterServiceImpl(Keycloak keycloak, UserService userService, MessageSource messageSource) {
         this.keycloak = keycloak;
         this.userService = userService;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -39,10 +42,11 @@ public class RegisterServiceImpl implements RegistrationService {
         Optional<User> loginUser = userService.findByLogin(regUserDataDto.getLogin());
         Optional<User> emailUser = userService.findByEmail(regUserDataDto.getEmail());
         if (loginUser.isPresent()) {
-            throw new RestException("Login already exists");
+            throw new RestException(messageSource.getMessage(
+                    "exception.rest.login_is_exists", null, locale));
         }
         if (emailUser.isPresent()) {
-            throw new RestException("Email already exists");
+            throw new RestException(messageSource.getMessage("exception.rest.email_is_exists", null, locale));
         }
         CredentialRepresentation credential = new CredentialRepresentation();
         credential.setType(CredentialRepresentation.PASSWORD);
