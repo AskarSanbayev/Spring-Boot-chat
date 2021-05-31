@@ -37,7 +37,6 @@ public class EducationService implements AdditionalUserInfoService {
         List<Education> educations = userInfoDtos.stream().map(this::mapDto).collect(Collectors.toList());
         User user = userRepository.findByUuid(profileService.getUuid(principal)).orElse(null);
         educationRepo.deleteOldCareerInfos(savedIds, user.getId());
-        educations.forEach(user::addEducation);
         userRepository.save(user);
     }
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @NoArgsConstructor
 @Getter
@@ -22,6 +23,10 @@ public class RefsValues {
     @ManyToOne
     @JoinColumn(name = "ref_rid", nullable = false)
     private Refs refs;
+
+    @Column(name = "codeName", nullable = false)
+    @Size(max = 512, message = "Не больше 512 знаков")
+    private String codeName;
 
     @Column(name = "name", nullable = false)
     private String name;

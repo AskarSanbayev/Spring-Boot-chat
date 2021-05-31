@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 
@@ -21,13 +22,13 @@ public class UserRest {
 
     @GetMapping("/principal")
     public @ResponseBody
-    CustomUserDetails principal(Principal principal) {
+    CustomUserDetails principal(@ApiIgnore Principal principal) {
         return profileService.getUserDetails(principal);
     }
 
     @GetMapping("/roles")
     public @ResponseBody
-    String getRoles(Principal principal) {
+    String getRoles(@ApiIgnore Principal principal) {
         return profileService.getUserRoles(principal).toString();
     }
 

@@ -36,7 +36,6 @@ public class CareerInfoService implements AdditionalUserInfoService {
         List<CareerInfo> careerInfos = userInfoDtos.stream().map(this::mapDto).collect(Collectors.toList());
         User user = userRepository.findByUuid(profileService.getUuid(principal)).orElse(null);
         careerInfoRepo.deleteOldCareerInfos(savedIds, user.getId());
-        careerInfos.forEach(user::addCareerInfo);
         userRepository.save(user);
     }
 

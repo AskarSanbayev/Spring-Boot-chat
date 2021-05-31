@@ -1,16 +1,15 @@
 package com.chat.cyber.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +20,6 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_user")
     @SequenceGenerator(name = "sq_user", allocationSize = 1)
-    @JsonIgnore
     @Column(name = "record_id")
     private Long id;
 
@@ -34,12 +32,16 @@ public class User implements Serializable {
     @Column(name = "lastName")
     private String lastName;
 
+    @Column(name = "middleName")
+    private String middleName;
+
+    @Column(name = "fullName")
+    private String fullName;
+
     @Column(name = "username", nullable = false)
-    @NotBlank(message = "Login is a mandatory parameter!")
     private String username;
 
     @Column(name = "email")
-//    @Email(message = "Email is not correct")
     private String email;
 
     @Column(name = "age")
@@ -49,49 +51,24 @@ public class User implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthday;
 
-    @ManyToMany
-    @JoinTable(
-            name = "friend_list",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private List<User> friendList;
+    @OneToMany
+    private Set<User> friendList;
 
     @OneToMany
     @JoinColumn(name = "user_fk")
     private List<RefsValues> languages = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private ContactInfo userContactInfo;
-
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private Interests userInterests;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<CareerInfo> careerInfos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Education> educations = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private PersonalViews personalViews;
-
-    public void addCareerInfo(CareerInfo careerInfo) {
-        careerInfos.add(careerInfo);
-        careerInfo.setUser(this);
+    public void addFriend(User friend) {
+        this.friendList.add(friend);
     }
 
-    public void removeCareerInfo(CareerInfo careerInfo) {
-        careerInfos.remove(careerInfo);
-        careerInfo.setUser(null);
-    }
-
-    public void addEducation(Education education) {
-        educations.add(education);
-        education.setUser(this);
-    }
-
-    public void removeEducation(Education education) {
-        educations.remove(education);
-        education.setUser(null);
+    public void removeFriend(User friend) {
+        this.friendList.remove(friend);
     }
 }
