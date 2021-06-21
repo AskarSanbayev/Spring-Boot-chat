@@ -1,14 +1,14 @@
 package com.chat.cyber.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-@NoArgsConstructor
 @Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "refs_values")
 public class RefsValues {

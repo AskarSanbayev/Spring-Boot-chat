@@ -1,7 +1,11 @@
 package com.chat.cyber.service.impl;
 
+import com.chat.cyber.converter.UserDtoConverter;
 import com.chat.cyber.dto.PageInfoDto;
 import com.chat.cyber.dto.request.RegUserDataDto;
+import com.chat.cyber.dto.response.PagePresentDto;
+import com.chat.cyber.dto.response.UserDto;
+import com.chat.cyber.exception.UnexpectedException;
 import com.chat.cyber.model.User;
 import com.chat.cyber.repo.UserRepository;
 import com.chat.cyber.service.UserService;
@@ -20,13 +24,14 @@ import java.util.UUID;
 import static com.chat.cyber.util.AppConstants.USER_FULLNAME;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserDtoConverter userDtoConverter;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserDtoConverter userDtoConverter) {
         this.userRepository = userRepository;
+        this.userDtoConverter = userDtoConverter;
     }
 
     @Override
@@ -36,12 +41,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findByUUid(String uuid) {
-        return userRepository.findByUuid(uuid);
+    public User findByIdAndUuid(Long id, String uuid) {
+        Optional<User> user = userRepository.findById(id);
+        if (!user.isPresent() || !uuid.equalsIgnoreCase(user.get().getUuid())) {
+            throw new UnexpectedException("User not found");
+        }
+        return user.get();
     }
 
     @Override
-    public Slice<User> getFriends(Principal principal, PageInfoDto pageInfo) {
+    public PagePresentDto<UserDto> getFriends(Principal principal, PageInfoDto pageInfo) {
         Pageable pageable;
         int size = pageInfo.getSize();
         int page = pageInfo.getPage();
@@ -57,7 +66,9 @@ public class UserServiceImpl implements UserService {
         if (pageInfo.getSearchText() == null) {
             pageInfo.setSearchText("");
         }
-        return userRepository.getAllFriends(principal.getName(), pageInfo.getSearchText(), pageable);
+        Slice<User> allFriends = userRepository.getAllFriends(principal.getName(), pageInfo.getSearchText(), pageable);
+        Slice<UserDto> response = allFriends.map(userDtoConverter::convert);
+        return new PagePresentDto<>(response);
     }
 
     @Override
@@ -68,6 +79,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<User> findByUUid(String uuid) {
+        return userRepository.findByUuid(uuid);
     }
 
     @Override

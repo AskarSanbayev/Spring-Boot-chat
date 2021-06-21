@@ -23,19 +23,24 @@ public class Comment implements Serializable {
 
     @Column(name = "text")
     private String text;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "creation_date")
     private Date creationDate;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_date")
     private Date lastModifiedDate;
+
     @ManyToOne
     @JoinColumn(name = "post_fk", nullable = false)
     private Post post;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "like_fk", referencedColumnName = "record_id")
     @JsonIgnore
     private UserLike userLike;
+
     @ManyToOne
     @JoinColumn(name = "author_fk", nullable = false)
     private User author;

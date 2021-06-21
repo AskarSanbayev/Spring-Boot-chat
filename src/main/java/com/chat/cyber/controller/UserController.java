@@ -2,6 +2,8 @@ package com.chat.cyber.controller;
 
 import com.chat.cyber.dto.PageInfoDto;
 import com.chat.cyber.dto.request.userinfo.BaseUserInfoDto;
+import com.chat.cyber.dto.response.PagePresentDto;
+import com.chat.cyber.dto.response.UserDto;
 import com.chat.cyber.model.User;
 import com.chat.cyber.model.enums.RefsCodeName;
 import com.chat.cyber.service.AdditionalUserInfoService;
@@ -10,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Slice;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -30,18 +31,18 @@ public class UserController {
 
     @ApiOperation(value = "Получение всех пользователей", notes = "Получение всех пользователей")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping
+    @GetMapping("/all")
     public List<User> findAll() {
         return userService.findAll();
     }
 
     @ApiOperation(value = "Получение друзей", notes = "Получение друзей")
     @GetMapping("/friends")
-    public Slice<User> findAllFriends(@ApiIgnore Principal principal,
-                                      @ApiParam(value = "Текст поиска", required = false) @RequestParam(required = false) String searchText,
-                                      @ApiParam(value = "Страница (нумерация с 0)", example = "0") @RequestParam(name = "page") Integer page,
-                                      @ApiParam(value = "Строк", example = "2") @RequestParam(name = "size") Integer size,
-                                      @ApiParam(value = "Признак По убыванию", example = "false") @RequestParam(name = "isdesc", required = false) Boolean isdesc) {
+    public PagePresentDto<UserDto> findAllFriends(@ApiIgnore Principal principal,
+                                                  @ApiParam(value = "Текст поиска", required = false) @RequestParam(required = false) String searchText,
+                                                  @ApiParam(value = "Страница (нумерация с 0)", example = "0") @RequestParam(name = "page") Integer page,
+                                                  @ApiParam(value = "Строк", example = "2") @RequestParam(name = "size") Integer size,
+                                                  @ApiParam(value = "Признак По убыванию", example = "false") @RequestParam(name = "isdesc", required = false) Boolean isdesc) {
         PageInfoDto pageInfo = PageInfoDto.builder()
                 .page(page)
                 .size(size)
@@ -61,9 +62,10 @@ public class UserController {
     }
 
     @ApiOperation(value = "Получение пользователя по UUID", notes = "Получение пользователя по UUID")
-    @GetMapping("/{uuid}")
-    public User findUser(@PathVariable("uuid") String uuid) {
-        return userService.findByUUid(uuid).orElse(null);
+    @GetMapping
+    public User getUser(@RequestParam("uuid") String uuid,
+                        @RequestParam("id") Long id) {
+        return userService.findByIdAndUuid(id, uuid);
     }
 
 

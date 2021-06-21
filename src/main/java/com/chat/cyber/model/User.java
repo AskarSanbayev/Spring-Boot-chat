@@ -1,20 +1,32 @@
 package com.chat.cyber.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "user_table")
+@NamedEntityGraphs(
+        value = {
+                @NamedEntityGraph(
+                        name = "user-friends-graph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "friendList")
+                        }
+                )
+        }
+)
 public class User implements Serializable {
 
     @Id
@@ -51,11 +63,10 @@ public class User implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthday;
 
-    @OneToMany
-    private Set<User> friendList;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<User> friendList = new HashSet<>();
 
     @OneToMany
-    @JoinColumn(name = "user_fk")
     private List<RefsValues> languages = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
@@ -70,5 +81,43 @@ public class User implements Serializable {
 
     public void removeFriend(User friend) {
         this.friendList.remove(friend);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", age=" + age +
+                ", birthday=" + birthday +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return age == user.age &&
+                Objects.equals(id, user.id) &&
+                Objects.equals(uuid, user.uuid) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(lastName, user.lastName) &&
+                Objects.equals(middleName, user.middleName) &&
+                Objects.equals(fullName, user.fullName) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(birthday, user.birthday);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, uuid, name, lastName, middleName, fullName, username, email, age, birthday);
     }
 }

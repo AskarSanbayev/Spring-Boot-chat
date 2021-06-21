@@ -2,13 +2,13 @@ package com.chat.cyber.model;
 
 import com.chat.cyber.model.enums.EducationType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "user_education")
