@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,11 +17,17 @@ import java.util.*;
 @NamedEntityGraphs(
         value = {
                 @NamedEntityGraph(
-                        name = "user-friends-graph",
+                        name = "USER.base"
+                ),
+                @NamedEntityGraph(
+                        name = "USER.card",
                         attributeNodes = {
-                                @NamedAttributeNode(value = "friendList")
+                                @NamedAttributeNode("friendList"),
+                                @NamedAttributeNode("careerInfos"),
+                                @NamedAttributeNode("educations")
                         }
-                )
+                ),
+
         }
 )
 public class User implements Serializable {
@@ -67,13 +70,13 @@ public class User implements Serializable {
     private Set<User> friendList = new HashSet<>();
 
     @OneToMany
-    private List<RefsValues> languages = new ArrayList<>();
+    private Set<RefsValues> languages = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<CareerInfo> careerInfos = new ArrayList<>();
+    private Set<CareerInfo> careerInfos = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Education> educations = new ArrayList<>();
+    private Set<Education> educations = new HashSet<>();
 
     public void addFriend(User friend) {
         this.friendList.add(friend);
