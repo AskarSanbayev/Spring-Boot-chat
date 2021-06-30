@@ -1,21 +1,23 @@
 package com.chat.cyber.controller;
 
-import com.chat.cyber.dto.response.FileResponse;
+import com.chat.cyber.dto.response.ContentFileDto;
 import com.chat.cyber.service.StorageService;
+import com.chat.cyber.util.RestUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
+import java.util.Locale;
 
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping("/api/user/file")
+@Api(value = "Загузка медиа", tags = {"Загузка медиа"})
 public class FileController {
 
     private final StorageService storageService;
@@ -25,31 +27,57 @@ public class FileController {
         this.storageService = storageService;
     }
 
-    @PostMapping
-    public FileResponse uploadFile(@RequestParam("file") MultipartFile file,
-                                   Principal principal) {
-        String name = storageService.store(file, principal);
-
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path("name")
-                .toUriString();
-        return new FileResponse("name", uri, file.getContentType(), file.getSize());
+    @ApiImplicitParam(paramType = "header", name = "Accept-Language", defaultValue = "ru")
+    @PostMapping("/image")
+    @ApiOperation(value = "Загрузка фото", notes = "Загрузка фото")
+    public void loadImage(@ApiIgnore Locale locale,
+                          @ApiIgnore Principal principal,
+                          @RequestParam MultipartFile file) {
+        storageService.loadImage(file, principal, locale);
     }
 
-    @GetMapping("/{filename:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
-        Resource resource = storageService.loadAsResource(filename);
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+    @ApiImplicitParam(paramType = "header", name = "Accept-Language", defaultValue = "ru")
+    @PostMapping("/profile-image")
+    @ApiOperation(value = "Загрузка фото профиля", notes = "Загрузка фото профиля")
+    public void loadProfileImage(@ApiIgnore Locale locale,
+                                 @ApiIgnore Principal principal,
+                                 @RequestParam MultipartFile file) {
+        storageService.loadProfileImage(file, principal, locale);
     }
 
-    @DeleteMapping("/{filename:.+}")
-    public ResponseEntity<String> deleteFile(@PathVariable String filename) {
-        storageService.deleteFile(filename);
-        return new ResponseEntity<>("File deleted", HttpStatus.NO_CONTENT);
+    @ApiImplicitParam(paramType = "header", name = "Accept-Language", defaultValue = "ru")
+    @GetMapping("/profile-image")
+    @ApiOperation(value = "Получение фото профиля", notes = "Получение фото профиля")
+    public ResponseEntity<Object> downloadProfileImage(@ApiIgnore Locale locale,
+                                                       @ApiIgnore Principal principal) {
+        ContentFileDto contentFileDto = storageService.downloadProfileImage(principal);
+        if (contentFileDto == null) {
+            return null;
+        }
+        return RestUtils.buildResponseEntityWithInputStreamResource(contentFileDto.getFileType(), contentFileDto.getFileName(), contentFileDto.getData());
+    }
+
+    @ApiImplicitParam(paramType = "header", name = "Accept-Language", defaultValue = "ru")
+    @PostMapping("/video")
+    @ApiOperation(value = "Загрузка видео", notes = "Загрузка видео")
+    public void loadVideo(@ApiIgnore Locale locale,
+                          @ApiIgnore Principal principal,
+                          @RequestParam MultipartFile file) {
+        storageService.loadVideo(file, principal, locale);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> downloadFile(@ApiIgnore Locale locale,
+                                               @RequestParam String uuid) {
+        ContentFileDto contentFileDto = storageService.downloadFile(uuid, locale);
+        if (contentFileDto == null) {
+            return null;
+        }
+        return RestUtils.buildResponseEntityWithInputStreamResource(contentFileDto.getFileType(), contentFileDto.getFileName(), contentFileDto.getData());
+    }
+
+    @DeleteMapping
+    public void deleteFile(@ApiIgnore Locale locale, @RequestParam String uuid) {
+        storageService.deleteFile(uuid, locale);
     }
 }

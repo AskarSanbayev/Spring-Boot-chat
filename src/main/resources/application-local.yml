@@ -51,10 +51,17 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 50MB
+      max-request-size: 50MB
 server:
   port: 8888
+
+amazon:
+  s3:
+    access-key: '@aws.access.key@'
+    bucket-name: my-content-store
+    endpoint: https://my-content-store.s3-eu-central-1.amazonaws.com/
+    secret-key: '@aws.secret.key@'
 
 my:
   authorization-url: /api/oauth2/authorization
@@ -65,8 +72,4 @@ keycloak:
   server-url: http://localhost:8080/auth
   username: user
   password: 1234
-
-storage:
-  location: ./uploads
-
 

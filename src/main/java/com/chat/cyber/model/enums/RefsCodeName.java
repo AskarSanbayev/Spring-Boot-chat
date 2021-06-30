@@ -25,8 +25,12 @@ public enum RefsCodeName {
     SCHOOL_NAME("SCHOOL_NAME"),
     STUDY_TYPE("STUDY_TYPE"),
     FACULTY("FACULTY"),
-    SCHOOL_STATUS("SCHOOL_STATUS");
-
+    SCHOOL_STATUS("SCHOOL_STATUS"),
+    REF_LANGUAGES("ref_languages"),
+    REF_FACULTY("ref_faculty"),
+    REF_STUDY_TYPE("ref_study_type"),
+    REF_EDUCATION_STATUS("ref_education_status"),
+    REF_CONTENT_TYPE("ref_content_type");
 
     @Getter
     private String value;

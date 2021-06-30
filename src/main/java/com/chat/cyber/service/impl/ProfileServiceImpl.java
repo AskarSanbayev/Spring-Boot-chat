@@ -7,10 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -38,7 +35,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Collection<String> getUserRoles(Principal principal) {
         if (principal == null) {
-            return Arrays.asList("empty");
+            return Collections.singletonList("empty");
         } else {
             Set<String> roles = new HashSet<String>();
             Collection<? extends GrantedAuthority> authorities = ((Authentication) principal).getAuthorities();

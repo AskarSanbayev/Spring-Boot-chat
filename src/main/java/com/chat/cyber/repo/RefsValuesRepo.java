@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface RefsValuesRepo extends JpaRepository<RefsValues, Long> {
     List<RefsValues> findByRefsCodeName(String codeName);
 
-    Optional<RefsValues> findByIdAndRefsCodeName(Long valueId, String refCodeName);
+    Optional<RefsValues> findByCodeNameAndRefsCodeName(String codeName, String refCodeName);
 }

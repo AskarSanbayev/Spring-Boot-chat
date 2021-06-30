@@ -26,8 +26,7 @@ import java.util.*;
                                 @NamedAttributeNode("careerInfos"),
                                 @NamedAttributeNode("educations")
                         }
-                ),
-
+                )
         }
 )
 public class User implements Serializable {
