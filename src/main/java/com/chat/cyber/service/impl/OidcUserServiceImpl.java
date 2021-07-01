@@ -1,6 +1,9 @@
 package com.chat.cyber.service.impl;
 
+import com.chat.cyber.exception.UnexpectedException;
+import com.chat.cyber.model.User;
 import com.chat.cyber.security.CustomOidcUserDetailsImpl;
+import com.chat.cyber.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,14 +24,23 @@ public class OidcUserServiceImpl implements OAuth2UserService<OidcUserRequest, O
 
     private final String REQUIRED_ROLE_NAME_BEGIN = "ROLE_";
 
-    OidcUserService delegate = new OidcUserService();
+    private final UserService userService;
+    private OidcUserService delegate;
+
+    public OidcUserServiceImpl(UserService userService) {
+        this.userService = userService;
+        this.delegate = new OidcUserService();
+    }
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         OidcUser user = delegate.loadUser(userRequest);
+        final Optional<User> principalLogin = userService.findByLogin(user.getPreferredUsername());
+        if (!principalLogin.isPresent()) {
+            throw new UnexpectedException("Oidc user not found in db");
+        }
         List<GrantedAuthority> rolesAsAuthorities = getRolesAsAuthorities(user);
-        CustomOidcUserDetailsImpl customUser = new CustomOidcUserDetailsImpl(user, rolesAsAuthorities);
-        return customUser;
+        return new CustomOidcUserDetailsImpl(user, rolesAsAuthorities, principalLogin.get().getId());
     }
 
     private List<GrantedAuthority> getRolesAsAuthorities(OidcUser user) {

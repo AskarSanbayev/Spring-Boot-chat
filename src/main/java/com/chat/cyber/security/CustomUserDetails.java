@@ -9,6 +9,8 @@ public interface CustomUserDetails extends UserDetails {
 
     String getUuid();
 
+    Long getId();
+
     String getUsername();
 
     String getEmail();

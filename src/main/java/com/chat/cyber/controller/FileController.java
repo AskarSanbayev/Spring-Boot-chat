@@ -77,7 +77,7 @@ public class FileController {
     }
 
     @DeleteMapping
-    public void deleteFile(@ApiIgnore Locale locale, @RequestParam String uuid) {
-        storageService.deleteFile(uuid, locale);
+    public void deleteFile(@ApiIgnore Principal principal, @ApiIgnore Locale locale, @RequestParam String uuid) {
+        storageService.deleteFile(principal, uuid, locale);
     }
 }

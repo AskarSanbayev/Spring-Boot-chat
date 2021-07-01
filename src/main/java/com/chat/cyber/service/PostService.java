@@ -12,11 +12,11 @@ public interface PostService {
 
     List<Post> findAllByAuthor(Principal principal);
 
-    void update(PostDto postDto);
+    void update(Principal principal, PostDto postDto);
 
     List<Post> findAll();
 
-    void deleteById(String id);
+    void deleteById(Principal principal, Long postId);
 
-    Post findById(String id);
+    Post findById(Long id);
 }

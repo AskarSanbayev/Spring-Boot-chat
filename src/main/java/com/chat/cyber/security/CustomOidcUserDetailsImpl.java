@@ -25,6 +25,10 @@ public class CustomOidcUserDetailsImpl implements OidcUser, CustomUserDetails {
 
     @Getter
     @Setter
+    private Long id;
+
+    @Getter
+    @Setter
     private String uuid;
 
     @Getter
@@ -37,20 +41,14 @@ public class CustomOidcUserDetailsImpl implements OidcUser, CustomUserDetails {
     @JsonIgnore
     private OidcUser oidcUser;
 
-    public CustomOidcUserDetailsImpl(OidcUser oidcUser, List<? extends GrantedAuthority> rolesAsAuthorities) {
+    public CustomOidcUserDetailsImpl(OidcUser oidcUser, List<? extends GrantedAuthority> rolesAsAuthorities,
+                                     Long userId) {
         this.oidcUser = oidcUser;
         this.username = oidcUser.getPreferredUsername();
         this.email = oidcUser.getEmail();
         this.uuid = oidcUser.getSubject();
         this.authorities = rolesAsAuthorities;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
+        this.id = userId;
     }
 
     @Override

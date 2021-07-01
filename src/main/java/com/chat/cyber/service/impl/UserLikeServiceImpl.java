@@ -28,10 +28,10 @@ public class UserLikeServiceImpl implements UserLikeService {
 
     @Override
     public void update(UserLikeDto userLikeDto, Principal principal) {
-        if (userLikeDto.getUserLikeType() == null && (userLikeDto.getPostUuid() == null || userLikeDto.getCommentId() == null)) {
+        if (userLikeDto.getUserLikeType() == null && (userLikeDto.getPostId() == null || userLikeDto.getCommentId() == null)) {
             throw new RestException();
         }
-        updateLikeAndDisLike(userLikeDto.getPostUuid() != null, userLikeDto, principal);
+        updateLikeAndDisLike(userLikeDto.getPostId() != null, userLikeDto, principal);
     }
 
     // TODO
@@ -39,14 +39,14 @@ public class UserLikeServiceImpl implements UserLikeService {
     private void updateLikeAndDisLike(boolean isPost, UserLikeDto userLikeDto, Principal principal) {
         String uuid = profileService.getUuid(principal);
         User user = userService.findByUUid(uuid).orElseThrow(RestException::new);
-        UserLike userLike = isPost ? postService.findById(userLikeDto.getPostUuid()).getUserLike()
-                : commentService.findById(userLikeDto.getCommentId()).getUserLike();
-        if (userLikeDto.getUserLikeType() == UserLikeType.LIKE) {
-            userLike.getAuthor().add(user);
-        } else {
-            userLike.getAuthor().remove(user);
-        }
-        userLike.setLikesCount((long) userLike.getAuthor().size());
-        userLikeRepo.save(userLike);
+////        UserLike userLike = isPost ? postService.findById(userLikeDto.getPostId()).getUserLike()
+////                : commentService.findById(userLikeDto.getCommentId()).getUserLike();
+//        if (userLikeDto.getUserLikeType() == UserLikeType.LIKE) {
+//            userLike.getAuthor().add(user);
+//        } else {
+//            userLike.getAuthor().remove(user);
+//        }
+//        userLike.setLikesCount((long) userLike.getAuthor().size());
+//        userLikeRepo.save(userLike);
     }
 }

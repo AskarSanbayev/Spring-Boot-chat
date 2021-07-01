@@ -18,5 +18,5 @@ public interface StorageService {
 
     void loadVideo(MultipartFile file, Principal principal, Locale locale);
 
-    void deleteFile(String uuid, Locale locale);
+    void deleteFile(Principal principal, String uuid, Locale locale);
 }

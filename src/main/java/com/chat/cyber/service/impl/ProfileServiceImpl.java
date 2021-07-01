@@ -7,13 +7,21 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
     @Override
     public String getUuid(Principal principal) {
         return getUserDetails(principal).getUuid();
+    }
+
+    @Override
+    public Long getId(Principal principal) {
+        return getUserDetails(principal).getId();
     }
 
     @Override

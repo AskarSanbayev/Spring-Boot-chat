@@ -22,12 +22,12 @@ public class UserLike {
     @Column(name = "likesCount")
     private Long likesCount;
 
-    @OneToOne(mappedBy = "userLike", cascade = CascadeType.ALL)
-    private Post post;
-
-    @OneToOne(mappedBy = "userLike", cascade = CascadeType.ALL)
-    private Comment comment;
-
-    @OneToMany
-    private List<User> author = new ArrayList<>();
+//    @OneToOne(mappedBy = "userLike", cascade = CascadeType.ALL)
+//    private Post post;
+//
+//    @OneToOne(mappedBy = "userLike", cascade = CascadeType.ALL)
+//    private Comment comment;
+//
+//    @OneToMany
+//    private List<User> author = new ArrayList<>();
 }

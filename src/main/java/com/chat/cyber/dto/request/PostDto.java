@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class PostDto {
-    private String uuid;
+    private Long id;
     private String text;
 }

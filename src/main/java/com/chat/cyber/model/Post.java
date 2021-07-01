@@ -23,9 +23,6 @@ public class Post implements Serializable {
     @Column(name = "record_id")
     private Long id;
 
-    @Column(name = "uuid")
-    private String uuid;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "creation_date")
     private Date creationDate;
@@ -37,14 +34,8 @@ public class Post implements Serializable {
     @Column(name = "post_text")
     private String text;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "like_fk", referencedColumnName = "record_id")
-    @JsonIgnore
-    private UserLike userLike;
+    @Column(name = "author_fk")
+    private Long authorId;
 
     @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, targetEntity = Comment.class)
     private List<Comment> postComments;

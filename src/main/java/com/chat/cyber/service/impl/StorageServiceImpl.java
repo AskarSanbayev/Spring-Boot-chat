@@ -3,18 +3,18 @@ package com.chat.cyber.service.impl;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.chat.cyber.comp.PermissionHelper;
 import com.chat.cyber.dto.response.ContentFileDto;
 import com.chat.cyber.exception.RestException;
 import com.chat.cyber.exception.UnexpectedException;
 import com.chat.cyber.model.ContentFile;
 import com.chat.cyber.model.RefsValues;
-import com.chat.cyber.model.User;
 import com.chat.cyber.model.enums.RefsCodeName;
 import com.chat.cyber.model.enums.RefsValuesCodeName;
 import com.chat.cyber.repo.ContentFilesRepo;
+import com.chat.cyber.service.ProfileService;
 import com.chat.cyber.service.RefsValuesService;
 import com.chat.cyber.service.StorageService;
-import com.chat.cyber.service.UserService;
 import com.chat.cyber.util.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -37,44 +37,46 @@ public class StorageServiceImpl implements StorageService {
     @Value("${amazon.s3.bucket-name}")
     private String bucketName;
 
-    private final UserService userService;
+    private final ProfileService profileService;
     private final MessageSource messageSource;
     private final ContentFilesRepo filesRepo;
     private final AmazonS3 s3storage;
     private final RefsValuesService refsValuesService;
+    private final PermissionHelper permissionHelper;
 
-    public StorageServiceImpl(UserService userService, MessageSource messageSource, ContentFilesRepo filesRepo,
-                              AmazonS3 s3storage, RefsValuesService refsValuesService) {
-        this.userService = userService;
+    public StorageServiceImpl(ProfileService profileService, MessageSource messageSource, ContentFilesRepo filesRepo,
+                              AmazonS3 s3storage, RefsValuesService refsValuesService, PermissionHelper permissionHelper) {
+        this.profileService = profileService;
         this.messageSource = messageSource;
         this.filesRepo = filesRepo;
         this.s3storage = s3storage;
         this.refsValuesService = refsValuesService;
+        this.permissionHelper = permissionHelper;
     }
 
     @Override
     public void loadImage(MultipartFile file, Principal principal, Locale locale) {
-        User user = userService.findByLogin(principal.getName()).orElseThrow(UnexpectedException::new);
+        final Long authorId = profileService.getId(principal);
         checkFile(locale, file, ALLOWED_IMAGE_EXTENSIONS);
         RefsValues imageType = refsValuesService.findCodeNameAndRefsCodeName(RefsValuesCodeName.CONTENT_IMAGE, RefsCodeName.REF_CONTENT_TYPE).orElseThrow(UnexpectedException::new);
-        saveFile(file, user.getId(), imageType);
+        saveFile(file, authorId, imageType);
     }
 
     @Override
     public void loadProfileImage(MultipartFile file, Principal principal, Locale locale) {
-        User user = userService.findByLogin(principal.getName()).orElseThrow(UnexpectedException::new);
+        final Long authorId = profileService.getId(principal);
         checkFile(locale, file, ALLOWED_IMAGE_EXTENSIONS);
-        ContentFile profileImage = filesRepo.findByUserIdAndAndContentTypeCodeName(user.getId(), RefsValuesCodeName.CONTENT_PROFILE_IMAGE.getValue());
+        ContentFile profileImage = filesRepo.findByUserIdAndAndContentTypeCodeName(authorId, RefsValuesCodeName.CONTENT_PROFILE_IMAGE.getValue());
         if (profileImage == null) {
             RefsValues profileImageType = refsValuesService.findCodeNameAndRefsCodeName(RefsValuesCodeName.CONTENT_PROFILE_IMAGE, RefsCodeName.REF_CONTENT_TYPE).orElseThrow(UnexpectedException::new);
-            saveFile(file, user.getId(), profileImageType);
+            saveFile(file, authorId, profileImageType);
         }
     }
 
     @Override
     public ContentFileDto downloadProfileImage(Principal principal) {
-        User user = userService.findByLogin(principal.getName()).orElseThrow(UnexpectedException::new);
-        ContentFile profileImage = filesRepo.findByUserIdAndAndContentTypeCodeName(user.getId(), RefsValuesCodeName.CONTENT_PROFILE_IMAGE.getValue());
+        final Long authorId = profileService.getId(principal);
+        ContentFile profileImage = filesRepo.findByUserIdAndAndContentTypeCodeName(authorId, RefsValuesCodeName.CONTENT_PROFILE_IMAGE.getValue());
         if (profileImage == null) {
             return null;
         }
@@ -95,19 +97,21 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void loadVideo(MultipartFile file, Principal principal, Locale locale) {
-        User user = userService.findByLogin(principal.getName()).orElseThrow(UnexpectedException::new);
+        final Long authorId = profileService.getId(principal);
         checkFile(locale, file, ALLOWED_VIDEO_EXTENSIONS);
         RefsValues videoType = refsValuesService.findCodeNameAndRefsCodeName(RefsValuesCodeName.CONTENT_VIDEO, RefsCodeName.REF_CONTENT_TYPE).orElseThrow(UnexpectedException::new);
-        saveFile(file, user.getId(), videoType);
+        saveFile(file, authorId, videoType);
     }
 
     @Override
-    public void deleteFile(String uuid, Locale locale) {
+    public void deleteFile(Principal principal, String uuid, Locale locale) {
+        final Long authorId = profileService.getId(principal);
         Optional<ContentFile> file = filesRepo.findById(UUID.fromString(uuid));
         if (!file.isPresent()) {
             throw new RestException(messageSource.getMessage("exception.rest.file_not_found",
                     null, locale));
         }
+        permissionHelper.checkFileEditPermission(authorId, file.get());
         s3storage.deleteObject(bucketName, file.get().getPath());
         filesRepo.deleteById(UUID.fromString(uuid));
     }

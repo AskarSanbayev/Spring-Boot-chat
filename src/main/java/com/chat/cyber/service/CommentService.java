@@ -10,11 +10,11 @@ public interface CommentService {
 
     void create(CommentDto comment, Principal principal);
 
-    void update(CommentDto comment);
+    void update(Principal principal, CommentDto comment);
 
     List<Comment> findAll();
 
-    void deleteById(Long id);
+    void deleteById(Principal principal, Long commentId);
 
     Comment findById(Long id);
 }

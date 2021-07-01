@@ -1,17 +1,15 @@
 package com.chat.cyber.service.impl;
 
+import com.chat.cyber.comp.PermissionHelper;
 import com.chat.cyber.dto.request.CommentDto;
 import com.chat.cyber.exception.RestException;
 import com.chat.cyber.model.Comment;
 import com.chat.cyber.model.Post;
-import com.chat.cyber.model.User;
-import com.chat.cyber.model.UserLike;
 import com.chat.cyber.repo.CommentRepository;
 import com.chat.cyber.service.CommentService;
 import com.chat.cyber.service.PostService;
 import com.chat.cyber.service.ProfileService;
-import com.chat.cyber.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +18,13 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-@Transactional
+@AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private ProfileService profileService;
+
+    private final CommentRepository commentRepository;
+    private final PostService postService;
+    private final ProfileService profileService;
+    private final PermissionHelper permissionHelper;
 
     @Override
     @Transactional(readOnly = true)
@@ -38,15 +33,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        commentRepository.deleteById(id);
+    public void deleteById(Principal principal, Long commentId) {
+        final Long authorId = profileService.getId(principal);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(RestException::new);
+        permissionHelper.checkCommentEditPermission(authorId, comment);
+        commentRepository.deleteById(commentId);
     }
 
     @Override
-    public void update(CommentDto commentDto) {
+    public void update(Principal principal, CommentDto commentDto) {
+        final Long authorId = profileService.getId(principal);
         Comment comment = commentRepository.findById(commentDto.getId()).orElseThrow(RestException::new);
+        Date updateDate = new Date();
         comment.setText(commentDto.getText());
-        comment.setLastModifiedDate(new Date());
+        comment.setLastModifiedDate(updateDate);
+        permissionHelper.checkCommentEditPermission(authorId, comment);
         commentRepository.save(comment);
     }
 
@@ -57,16 +58,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void create(CommentDto commentDto, Principal principal) {
-        User author = userService.findByUUid(profileService.getUuid(principal)).orElseThrow(RestException::new);
-        Post post = postService.findById(commentDto.getPostUuid());
+        final Long authorId = profileService.getId(principal);
+        Post post = postService.findById(commentDto.getPostId());
         Comment comment = new Comment();
         Date createDate = new Date();
         comment.setCreationDate(createDate);
         comment.setLastModifiedDate(createDate);
-        comment.setAuthor(author);
+        comment.setAuthorId(authorId);
         comment.setPost(post);
         comment.setText(commentDto.getText());
-        comment.setUserLike(new UserLike());
         commentRepository.save(comment);
     }
 }

@@ -22,18 +22,18 @@ public class PostController {
     }
 
     @PostMapping
-    public void createPost(Principal principal, @RequestBody PostDto postDto) {
+    public void createPost(@ApiIgnore Principal principal, @RequestBody PostDto postDto) {
         postService.create(postDto, principal);
     }
 
     @PutMapping
-    public void updatePost(@RequestBody PostDto post) {
-        postService.update(post);
+    public void updatePost(@ApiIgnore Principal principal, @RequestBody PostDto post) {
+        postService.update(principal, post);
     }
 
-    @DeleteMapping(value = "/{uuid}")
-    public void deletePost(@PathVariable String uuid) {
-        postService.deleteById(uuid);
+    @DeleteMapping(value = "/{id}")
+    public void deletePost(@ApiIgnore Principal principal, @PathVariable Long id) {
+        postService.deleteById(principal, id);
     }
 
     @PutMapping("/like")

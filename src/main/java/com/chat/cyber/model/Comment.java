@@ -36,12 +36,6 @@ public class Comment implements Serializable {
     @JoinColumn(name = "post_fk", nullable = false)
     private Post post;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @JoinColumn(name = "like_fk", referencedColumnName = "record_id")
-    @JsonIgnore
-    private UserLike userLike;
-
-    @ManyToOne
-    @JoinColumn(name = "author_fk", nullable = false)
-    private User author;
+    @Column(name = "author_fk", nullable = false)
+    private Long authorId;
 }

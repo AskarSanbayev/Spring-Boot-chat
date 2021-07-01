@@ -8,6 +8,8 @@ import java.util.Collection;
 public interface ProfileService {
     String getUuid(Principal principal);
 
+    Long getId(Principal principal);
+
     String getUsername(Principal principal);
 
     String getEmail(Principal principal);

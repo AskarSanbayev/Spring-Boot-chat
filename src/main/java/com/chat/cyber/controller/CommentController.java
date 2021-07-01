@@ -30,13 +30,13 @@ public class CommentController {
     }
 
     @PutMapping
-    public void updateComment(@RequestBody CommentDto comment) {
-        commentService.update(comment);
+    public void updateComment(@ApiIgnore Principal principal, @RequestBody CommentDto comment) {
+        commentService.update(principal, comment);
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteComment(@PathVariable Long id) {
-        commentService.deleteById(id);
+    public void deleteComment(@ApiIgnore Principal principal, @PathVariable(name = "id") Long commentId) {
+        commentService.deleteById(principal, commentId);
     }
 
     @PutMapping("/like")
