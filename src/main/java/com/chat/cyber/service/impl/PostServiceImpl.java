@@ -3,11 +3,13 @@ package com.chat.cyber.service.impl;
 import com.chat.cyber.comp.PermissionHelper;
 import com.chat.cyber.dto.request.PostDto;
 import com.chat.cyber.exception.RestException;
+import com.chat.cyber.exception.UnexpectedException;
 import com.chat.cyber.model.Post;
-import com.chat.cyber.model.UserLike;
+import com.chat.cyber.model.User;
 import com.chat.cyber.repo.PostRepository;
 import com.chat.cyber.service.PostService;
 import com.chat.cyber.service.ProfileService;
+import com.chat.cyber.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final ProfileService profileService;
+    private final UserService userService;
     private final PermissionHelper permissionHelper;
 
     @Override
@@ -35,6 +38,18 @@ public class PostServiceImpl implements PostService {
     public List<Post> findAllByAuthor(Principal principal) {
         final Long authorId = profileService.getId(principal);
         return postRepository.findByAuthorId(authorId);
+    }
+
+    @Transactional
+    @Override
+    public void likePost(Principal principal, Long postId) {
+        final User user = userService.findByLogin(principal.getName()).orElseThrow(UnexpectedException::new);
+        final Post likedPost = findById(postId);
+        if (likedPost.getLikes().contains(user)) {
+            likedPost.getLikes().remove(user);
+        } else {
+            likedPost.getLikes().add(user);
+        }
     }
 
     @Override

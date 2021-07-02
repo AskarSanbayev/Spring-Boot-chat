@@ -1,13 +1,14 @@
 package com.chat.cyber.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -38,4 +39,12 @@ public class Comment implements Serializable {
 
     @Column(name = "author_fk", nullable = false)
     private Long authorId;
+
+    @ManyToMany
+    @JoinTable(
+            name = "comment_likes",
+            joinColumns = {@JoinColumn(name = "comment_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private Set<User> likes = new HashSet<>();
 }

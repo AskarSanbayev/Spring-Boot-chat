@@ -12,6 +12,8 @@ public interface CommentService {
 
     void update(Principal principal, CommentDto comment);
 
+    void likeComment(Principal principal, Long commentId);
+
     List<Comment> findAll();
 
     void deleteById(Principal principal, Long commentId);

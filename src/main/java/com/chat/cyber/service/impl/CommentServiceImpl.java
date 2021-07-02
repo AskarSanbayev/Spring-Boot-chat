@@ -3,12 +3,15 @@ package com.chat.cyber.service.impl;
 import com.chat.cyber.comp.PermissionHelper;
 import com.chat.cyber.dto.request.CommentDto;
 import com.chat.cyber.exception.RestException;
+import com.chat.cyber.exception.UnexpectedException;
 import com.chat.cyber.model.Comment;
 import com.chat.cyber.model.Post;
+import com.chat.cyber.model.User;
 import com.chat.cyber.repo.CommentRepository;
 import com.chat.cyber.service.CommentService;
 import com.chat.cyber.service.PostService;
 import com.chat.cyber.service.ProfileService;
+import com.chat.cyber.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,7 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final UserService userService;
     private final PostService postService;
     private final ProfileService profileService;
     private final PermissionHelper permissionHelper;
@@ -49,6 +53,18 @@ public class CommentServiceImpl implements CommentService {
         comment.setLastModifiedDate(updateDate);
         permissionHelper.checkCommentEditPermission(authorId, comment);
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    @Override
+    public void likeComment(Principal principal, Long commentId) {
+        final User user = userService.findByLogin(principal.getName()).orElseThrow(UnexpectedException::new);
+        final Comment likedComment = findById(commentId);
+        if (likedComment.getLikes().contains(user)) {
+            likedComment.getLikes().remove(user);
+        } else {
+            likedComment.getLikes().add(user);
+        }
     }
 
     @Override

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class UserLikeDto {
 
-    private Long postId;
-    private Long commentId;
+    private Long entityId;
     private UserLikeType userLikeType;
 }

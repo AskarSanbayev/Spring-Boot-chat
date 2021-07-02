@@ -12,6 +12,8 @@ public interface PostService {
 
     List<Post> findAllByAuthor(Principal principal);
 
+    void likePost(Principal principal, Long postId);
+
     void update(Principal principal, PostDto postDto);
 
     List<Post> findAll();
